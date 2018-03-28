@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>
+    <span>Выберите район</span>
+</h2>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-4">
+        {% for county in counties %}
+            <div class="page-header">
+                <h4>{{ county }}</h4>
+            </div>
+            {% for item in districts[county] %}
+                <div class="media" data-num="0" data-title="Крюково">
+                    
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a href="/checklist/{{county}}/{{item}}/">{{ item }}</a>
+                        </h4>
+                    </div>
+                    
+                </div>
+            {% endfor %}
+        {% endfor %}
+        <!-- <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Матушкино</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Савелки</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Силино</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Старое крюково</a>
+                </h4>
+            </div>
+        </div> -->
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-4">
+        <div class="page-header">
+            <h4>ЦАО</h4>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Арбат</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Басманный</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Замоскворечье</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Красносельский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Мещанский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Пресненский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Таганский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Тверской</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Хамовники</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Матушкино">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Якиманка</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-4">
+        <div class="page-header">
+            <h4>CАО</h4>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Аэропорт</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Беговой</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Бескудниковский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Войковский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Восточное Дегунино</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Головинский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Дмитровский</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Западное Дегунино</a>
+                </h4>
+            </div>
+        </div>
+        <div class="media" data-num="0" data-title="Крюково">
+            <div class="media-body">
+                <h4 class="media-heading">
+                    <a href="/checklist/0/0/">Коптево</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

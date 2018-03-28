@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Отчет о мероприятии сохранен</h2>
+<div id="js-content" data-uid="{{ report.id }}">
+    <ul class="list-unstyled">
+        <li>Номер отчета: <a href="/checklist/view/{{ report.id }}">#{{ report.id }}</a></li>
+        <li>Мероприятие: {{ report.activity.name }}</li>
+        <li>Дата: {{ report.created.strftime('%d-%m-%Y') }}</li>
+    </ul>
+</div><!-- /.js-content -->
+{% endblock %}
+
+{% block styles %}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

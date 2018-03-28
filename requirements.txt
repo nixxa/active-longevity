@@ -1,0 +1,7 @@
+flask==0.12.2
+Flask-DebugToolbar
+flask-sqlalchemy
+flask-httpauth
+flask-wtf
+flask_migrate
+flask_script

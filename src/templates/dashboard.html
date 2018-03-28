@@ -1,0 +1,329 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Посетители мероприятий за сегодня</h1>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="container1" style="height: 600px;"></div>
+    </div>
+    <div class="col-md-12">
+        <div id="container2" style="height: 600px;"></div>
+    </div>
+</div>
+
+<div class="page-header">
+        <h1>Посетители мероприятий за период</h1>
+        <small><input type="date" value="2018-04-01" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/> - <input type="date" value="2018-06-01" /></small>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="container3" style="height: 600px;"></div>
+        </div>
+        <div class="col-md-12">
+            <div id="container4" style="height: 600px;"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        require(['highcharts', 'jquery'], function (highcharts, $) {
+            $(function () {
+                Highcharts.chart('container1', {
+                    chart: {
+                        type: 'bar'
+                    },
+                    title: {
+                        text: 'По типу мероприятий'
+                    },
+                    xAxis: {
+                        categories: [
+                            'ОФП',
+                            'Гимнастика',
+                            'Фитнес, тренажеры',
+                            'Скандинавская ходьба',
+                            'Танцы',
+                            'Пение',
+                            'Рисование',
+                            'Художественно-прикладное творчество',
+                            'Информационные технологии',
+                            'Английский язык',
+                            'Здорово жить',
+                            'Шашки, шахматы'
+                        ]
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: 'Количество участников'
+                        }
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            grouping: false,
+                            shadow: false,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'План',
+                            data: [150, 234, 75, 28, 167, 190, 176, 120, 96, 75, 75, 75],
+                            color: 'rgba(126,86,134,.9)'
+                        },
+                        {
+                            name: 'Факт',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            color: 'rgba(186,60,61,.9)'
+                        }
+                    ]
+                });
+
+                Highcharts.chart('container2', {
+                    chart: {
+                        type: 'column',
+                        inverted: true,
+                    },
+                    title: {
+                        text: 'Суммарно по округам'
+                    },
+                    xAxis: {
+                        categories: [
+                            'ЗелАО', 'ЦАО', 'ЗАО', 'СЗАО', 'САО', 'СВАО', 'ВАО', 'ЮВАО', 'ЮАО', 'ЮЗАО'
+                        ]
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: 'Количество участников'
+                        },
+                        
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'ОФП',
+                            data: [150, 234, 75, 28, 167, 190, 176, 120, 96, 75],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Гимнастика',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Фитнес, тренажеры',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Скандинавская ходьба',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Танцы',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Пение',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Художественно-прикладное творчество',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Информационные технологии',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Английский язык',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Здорово жить',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Шашки, шахматы',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        }
+                    ]
+                });
+
+                Highcharts.chart('container3', {
+                    chart: {
+                        type: 'bar'
+                    },
+                    title: {
+                        text: 'По типу мероприятий'
+                    },
+                    xAxis: {
+                        categories: [
+                            'ОФП',
+                            'Гимнастика',
+                            'Фитнес, тренажеры',
+                            'Скандинавская ходьба',
+                            'Танцы',
+                            'Пение',
+                            'Рисование',
+                            'Художественно-прикладное творчество',
+                            'Информационные технологии',
+                            'Английский язык',
+                            'Здорово жить',
+                            'Шашки, шахматы'
+                        ]
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: 'Количество участников'
+                        }
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            grouping: false,
+                            shadow: false,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'План',
+                            data: [150, 234, 75, 28, 167, 190, 176, 120, 96, 75, 75, 75],
+                            color: 'rgba(126,86,134,.9)'
+                        },
+                        {
+                            name: 'Факт',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            color: 'rgba(186,60,61,.9)'
+                        }
+                    ]
+                });
+
+                Highcharts.chart('container4', {
+                    chart: {
+                        type: 'column',
+                        inverted: true,
+                    },
+                    title: {
+                        text: 'Суммарно по округам'
+                    },
+                    xAxis: {
+                        categories: [
+                            'ЗелАО', 'ЦАО', 'ЗАО', 'СЗАО', 'САО', 'СВАО', 'ВАО', 'ЮВАО', 'ЮАО', 'ЮЗАО'
+                        ]
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: 'Количество участников'
+                        }
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'ОФП',
+                            data: [150, 234, 75, 28, 167, 190, 176, 120, 96, 75],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Гимнастика',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Фитнес, тренажеры',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Скандинавская ходьба',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Танцы',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Пение',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Художественно-прикладное творчество',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Информационные технологии',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Английский язык',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Здорово жить',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        },
+                        {
+                            name: 'Шашки, шахматы',
+                            data: [120, 134, 55, 18, 137, 90, 76, 90, 96, 54, 38, 46],
+                            stack: 'v'
+                        }
+                    ]
+                });
+            });
+        });
+    </script>
+{% endblock %}

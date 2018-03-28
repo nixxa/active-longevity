@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Отчеты по мероприятиям</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>##</th>
+            <th>Направление</th>
+            <th>Название</th>
+            <th>Район</th>
+            <th>Место проведения</th>
+            <th>Дата отчета</th>
+            <th>Кол-во участников<br/>(план/факт)</th>
+            <th>Фото</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rep in reports %}
+        <tr>
+            <td>{{ rep.id }}</td>
+            <td>{{ rep.activity.category }}</td>
+            <td>{{ rep.activity.name }}</td>
+            <td>{{ rep.activity.county  }} / {{ rep.activity.district }}</td>
+            <td>{{ rep.activity.executor }}</td>
+            <td>{{ rep.created.strftime("%d.%m.%Y") }}</td>
+            <td>{{ rep.activity.planned_visitors }} / {{ rep.visitors }}</td>
+            <td><a href="#" class="js-view-photo">просмотр</a></td>
+            <td>
+                <a href="#">edit</a> / <a href="#">remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>2</td>
+            <td>Обучение</td>
+            <td>Здорово жить</td>
+            <td>ЗелАО / Савелки</td>
+            <td>ГБУ ТЦСО "Зеленоградский" филиал "Крюково"</td>
+            <td>15.03.2008</td>
+            <td>25 / 25</td>
+            <td><a href="#">просмотр</a></td>
+            <td>
+                <a href="#">edit</a> / <a href="#">remove</a>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Физическая активность</td>
+            <td>ОФП</td>
+            <td>ЗелАО / Матушки</td>
+            <td>ГБПОУ ПК № 50 им. Дважды Героя Социалистического труда Н.А. Злобина</td>
+            <td>15.03.2008</td>
+            <td>75 / 53</td>
+            <td><a href="#">просмотр</a></td>
+            <td>
+                <a href="#">edit</a> / <a href="#">remove</a>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Физическая активность</td>
+            <td>Гимпастика</td>
+            <td>ЗелАО / Матушки</td>
+            <td>ГБУ ТЦСО "Зеленоградский" филиал "Солнечный"</td>
+            <td>15.03.2008</td>
+            <td>75 / 53</td>
+            <td><a href="#">просмотр</a></td>
+            <td>
+                <a href="#">edit</a> / <a href="#">remove</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Просмотр фотографии</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <img src="/static/img/photo.png" style="width: 100%">
+                        </div>
+                        <div class="col-xs-4">
+                            <p>
+                                Дата: 12.03.2018 14:01<br/>
+                                Место: Зеленоград, №1253<br/>
+                                Камера: Samsung SM-A520F
+                            </p>
+                        </div>
+                    </div>                    
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        require(['moment', 'jquery', 'bootstrap'], function (moment, $, bootstrap) {
+            $(function () {
+                moment.locale('ru');
+                $.each($('.js-datetime-from'), function () {
+                    var $this = $(this);
+                    $this.text(moment.utc($this.data('datetime')).fromNow());
+                });
+
+                $('.js-view-photo').click(function (e) {
+                    $('#myModal').modal('toggle');
+                })
+            });
+        });
+    </script>
+{% endblock %}
