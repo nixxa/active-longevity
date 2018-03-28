@@ -14,7 +14,7 @@ app.config.from_object('config.DevelopmentConfig')
 db = SQLAlchemy(app)
 auth = HTTPDigestAuth()
 csrf = CSRFProtect(app)
-toolbar = DebugToolbarExtension(app)
+#toolbar = DebugToolbarExtension(app)
 
 users = {
     "admin": "123Qwe",
