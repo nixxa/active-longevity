@@ -5,109 +5,73 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="hidden" name="county" value="{{ county }}" />
     <input type="hidden" name="district" value="{{ district }}" />
-    <div class="panel-group js-form" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default js-section">
-            <div class="panel-heading" role="tab" id="headingOne">
-                <h4 class="panel-title js-section-title">
-                    Отчет о мероприятии
-                </h4>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse in">
-                <div class="panel-body js-section-body">
-                    <div class="row mt10">
-                        <div class="col-xs-3">
-                            <label>Объект</label>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="form-xs">
-                            <select class="form-control js-question" name="executor" {% if selected %}data-filled="1"{% endif %}>
-                                <option value="">[ ... выберите из списка ... ]</option>
-                                {% for obj in objects %}
-                                <option value="{{ obj }}">{{ obj }}</option>
-                                {% endfor %}
-                                <!-- <option value="1">г. Зеленоград, корпус 2014</option>
-                                <option value="1">Фитнес-клуб "ФизКульт"</option>
-                                <option value="1">ГБУ "ЦФКисЗелАО"</option>
-                                <option value="1">ГБОУ Школа №618</option>
-                                <option value="1">г. Зеленоград, корпус 205а</option>
-                                <option value="1">ГБОУ Школа №1557</option> -->
-                            </select>
-                            </div>
-                        </div>
-                    </div><!-- /.row -->
-                    <div class="row mt10">
-                        <div class="col-xs-3">
-                            <label>Мероприятие</label>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="form-xs">
-                            <select class="form-control js-question" name="activity" {% if selected %}data-filled="1"{% endif %}>
-                                <option value="">[ ... выберите из списка ... ]</option>
-                                {% for name in names %}
-                                <option value="{{ name }}">{{ name }}</option>
-                                {% endfor %}
-                            </select>
-                            </div>
-                        </div>
-                    </div><!-- /.row -->
-                    <div class="row mt10">
-                        <div class="col-xs-3"><label>Дата</label></div>
-                        <div class="col-xs-9 text-right">
-                            <input type="hidden" name="p1_r1" value="" />
-                            <div class="form-xs">
-                                <select class="form-control js-question" id="day">
-                                    <option value="">[...]</option>
-                                    {% for i in range(1, 32) -%}
-                                    <option value="{{'%02d' % i}}">{{i}}</option>
-                                    {%- endfor %}
-                                </select>
-                                <select class="form-control js-question" id="month">
-                                    <option value="">[...]</option>
-                                    <option value="01">января</option>
-                                    <option value="02">февраля</option>
-                                    <option value="03">марта</option>
-                                    <option value="04">апреля</option>
-                                    <option value="05">мая</option>
-                                    <option value="06">июня</option>
-                                    <option value="07">июля</option>
-                                    <option value="08">августа</option>
-                                    <option value="09">сентября</option>
-                                    <option value="10">октября</option>
-                                    <option value="11">ноября</option>
-                                    <option value="12">декабря</option>
-                                </select>
-                                <select class="form-control js-question" id="year">
-                                    <option value="2018">2018</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div><!-- /.row -->
-                    <div class="row mt10">
-                        <div class="col-xs-3"><label>Количество участников</label></div>
-                        <div class="col-xs-9 text-right">
-                            <div class="form-xs">
-                                <input type="text" name="visitors" class="form-control js-question" style="text-align: right" />
-                            </div>
-                        </div>
-                    </div><!-- /.row -->
-                    <div class="row mt10">
-                            <div class="col-xs-3"><label>Фотография</label></div>
-                            <div class="col-xs-9 text-right">
-                                <div class="form-xs">
-                                    <input type="file" name="photo" class="form-control js-question" />
-                                </div>
-                            </div>
-                        </div><!-- /.row -->
-                </div><!-- /.panel-body -->
-            </div><!-- /.panel-collapse -->
-        </div><!-- /.panel -->
+
+    <div class="page-header">
+        <h4>Отчет о мероприятии</h4>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <input type="submit" class="btn btn-primary pull-right ml5" id="form-save" value="Сохранить" />
-            <a href="/" class="btn btn-default pull-right">Отмена</a>
-        </div>
-    </div><!-- /.row -->
+
+    <div class="col-xs-12">
+        <div class="row mt10">
+            <div class="col-xs-5">
+                <label>Объект</label>
+            </div>
+            <div class="col-xs-7 text-right">
+                <div class="form-xs">
+                <select class="form-control" name="executor" {% if selected %}data-filled="1"{% endif %}>
+                    <option value="">[ ... выберите из списка ... ]</option>
+                    {% for obj in objects %}
+                    <option value="{{ obj }}">{{ obj }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row mt10">
+            <div class="col-xs-5">
+                <label>Мероприятие</label>
+            </div>
+            <div class="col-xs-7 text-right">
+                <div class="form-xs">
+                <select class="form-control" name="activity" {% if selected %}data-filled="1"{% endif %}>
+                    <option value="">[ ... выберите из списка ... ]</option>
+                    {% for name in names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row mt10">
+            <div class="col-xs-5"><label>Дата</label></div>
+            <div class="col-xs-7 text-right">
+                <div class="form-xs">
+                    <input type="date" name="date" class="form-control" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row mt10">
+            <div class="col-xs-8"><label>Количество участников</label></div>
+            <div class="col-xs-4 text-right">
+                <div class="form-xs">
+                    <input type="text" name="visitors" class="form-control" style="text-align: right" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row mt10">
+            <div class="col-xs-5"><label>Фотография</label></div>
+            <div class="col-xs-7 text-right">
+                <div class="form-xs">
+                    <input type="file" name="photo" class="form-control" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row mt30">
+            <div class="col-xs-12">
+                <input type="submit" class="btn btn-primary pull-right ml5" id="form-save" value="Сохранить" />
+                <a href="/" class="btn btn-default pull-right">Отмена</a>
+            </div>
+        </div><!-- /.row -->
+    </div>
 </form><!-- /form -->
 {% endblock %}
 

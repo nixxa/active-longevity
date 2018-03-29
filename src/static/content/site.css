@@ -15,7 +15,6 @@ body {
 }
 
 .form-xs .form-control {
-    width: auto;
     height: auto;
     display: inline;
     font-size: 85%;
@@ -40,6 +39,9 @@ body {
 }
 .mr5 {
     margin-right: 5px !important;
+}
+.mt30 {
+    margin-top: 30px !important;
 }
 /* --- /margins and paddings --- */
 
