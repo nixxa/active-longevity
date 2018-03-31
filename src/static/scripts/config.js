@@ -22,6 +22,7 @@ require.config({
 		'audiojs': '/static/content/audiojs/audio.min',
 		'datatables': '/static/content/datatables/datatables',
         'pica': '/static/content/pica/pica.min',
+        'exifRestorer': '/static/scripts/exifRestorer',
         'highcharts': [
             'https://code.highcharts.com/highcharts',
             '/static/content/highcharts-6.0.7/highcharts'

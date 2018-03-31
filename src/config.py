@@ -1,22 +1,40 @@
+"""
+Configuration module
+"""
+import os
+
+
 class Config(object):
     """
     Configuration base, for all environments.
     """
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../data/application.db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://{}:{}@localhost:5432/longevity'.format(
+        os.environ.get('DB_USER', 'longevity'),
+        os.environ.get('DB_PASS', '123Qwe'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "whqw457891dnqqwr1"
     CSRF_ENABLED = True
 
 
 class ProductionConfig(Config):
-	SQLALCHEMY_DATABASE_URI = 'mysql://user@localhost/foo'
+    """
+    production configuration
+    """
+    DEBUG = False
+    SECRET_KEY = "hwd02328ncs.wrk4"
 
 
 class DevelopmentConfig(Config):
-	DEBUG = True
+    """
+    Development configuration
+    """
+    DEBUG = True
 
 
 class TestingConfig(Config):
+    """
+    Test configuration
+    """
     TESTING = True

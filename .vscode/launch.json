@@ -51,7 +51,9 @@
             "module": "flask",
             "cwd": "${workspaceFolder}",
             "env": {
-                "FLASK_APP": "${workspaceFolder}/src/app.py"
+                "FLASK_APP": "${workspaceFolder}/src/application.py",
+                "DB_USER": "longevity",
+                "DB_PASS": "123Qwe"
             },
             "args": [
                 "run",

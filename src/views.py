@@ -1,19 +1,18 @@
+"""
+Views module
+"""
 import os
-from uuid import uuid4
 from datetime import datetime
-from app import app, auth, db
-from flask import render_template, request
-from constants import UPLOADS_DIR, ALLOWED_EXTENSIONS
+from uuid import uuid4
+
+from flask import render_template, request, jsonify
 from werkzeug.utils import secure_filename
-from models import Activity, Report
-from sqlalchemy.orm import load_only
+
+from constants import UPLOADS_DIR
 from forms import ChecklistForm
+from models import Activity, Report
 
-
-class Place:
-    def __init__(self, county, district):
-        self.county = county
-        self.district = district
+from application import app, auth, db #pylint: disable=E0401
 
 
 @app.route('/')
@@ -67,13 +66,32 @@ def checklist_save():
     form = ChecklistForm()
     if not form.validate_on_submit():
         return 400, 'Bad params'
+    photo = form.photo.data
+    filename = uuid4().hex + '.jpg' # + secure_filename(photo.filename).split('.')[1]
+    # create dir for checklist
+    if not os.path.exists(UPLOADS_DIR):
+        os.makedirs(UPLOADS_DIR)
+    filepath = os.path.join(UPLOADS_DIR, filename)
+    photo.save(filepath)
+    # create report
     activity = Activity.query.first()
     report = Report(
         activity_id=activity.id,
-        visitors=form.visitors.data
+        visitors=form.visitors.data,
+        image_source='/uploads/{}'.format(filename)
     )
     db.session.add(report)
     db.session.commit()
+    return jsonify(dict(url='/checklist/{}/saved/'.format(report.id)))
+
+
+@app.route('/checklist/<int:report_id>/saved/', methods=['GET'])
+@auth.login_required
+def checklist_saved(report_id):
+    """
+    View saved report
+    """
+    report = Report.query.filter_by(id=report_id).first()
     return render_template(
         'checklist_saved.html',
         uid=str(report.id),
@@ -123,8 +141,6 @@ def upload():
     # submit a empty part without filename
     if not file or file.filename == '':
         return 'No selected file', 500
-    if not allowed_file(file.filename):
-        return 'File %s is not allowed' % file.filename, 500
     filename = secure_filename(file.filename)
     # create dir for checklist
     if not os.path.exists(UPLOADS_DIR):
@@ -132,8 +148,3 @@ def upload():
     filepath = os.path.join(UPLOADS_DIR, filename)
     file.save(filepath)
     return '', 200
-
-
-def allowed_file(filename):
-    fext = os.path.splitext(filename)[1].lower()
-    return fext in ALLOWED_EXTENSIONS

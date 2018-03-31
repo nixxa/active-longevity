@@ -2,9 +2,13 @@
 Models module
 """
 from datetime import datetime
-from app import db
+from application import db #pylint: disable=E0401
+
 
 class Activity(db.Model):
+    """
+    Activity class
+    """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     category = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(200), nullable=False)
@@ -20,6 +24,9 @@ class Activity(db.Model):
 
 
 class Report(db.Model):
+    """
+    Report class
+    """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

@@ -5,3 +5,4 @@ flask-httpauth
 flask-wtf
 flask_migrate
 flask_script
+psycopg2
