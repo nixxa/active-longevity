@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 """ Send email """
+
 import logging
 import os
 import re
