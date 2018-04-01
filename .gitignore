@@ -103,3 +103,4 @@ ENV/
 # project 
 /src/uploads/*.jpg
 *.wsgi
+node_modules/

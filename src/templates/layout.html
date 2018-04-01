@@ -10,7 +10,7 @@
     <!--<link rel="stylesheet" type="text/css" href="/static/content/bootstrap-3.3.6/css/bootstrap-checkbox.css" />-->
     {% block styles %}{% endblock %}
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
-	<script src="/static/scripts/modernizr-2.6.2.js"></script>
+	<script src="/static/content/modernizr-2.6.2/modernizr.js"></script>
 </head>
 
 <body>
@@ -45,8 +45,12 @@
         </div><!-- /.row -->
     </div><!-- /.container -->
     <!-- BEGIN scripts -->
-	<script src="/static/scripts/require.js"></script>
-    <script src="/static/scripts/config.js"></script>
+    <script src="/static/content/require-2.1.22/require.min.js"></script>
+    {% if debug %}
+    <script src="/static/scripts/config.dev.js"></script>
+    {% else %}
+    <script src="/static/scripts/config.prod.js"></script>
+    {% endif %}
     {% block scripts %}{% endblock %}
 	<!-- END scripts -->
 </body>
