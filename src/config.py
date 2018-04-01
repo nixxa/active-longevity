@@ -17,6 +17,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "whqw457891dnqqwr1"
     CSRF_ENABLED = True
+    LOGGER_HANDLER_POLICY = 'always'
 
 
 class ProductionConfig(Config):

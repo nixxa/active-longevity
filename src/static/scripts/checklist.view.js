@@ -111,6 +111,33 @@ define(['require','jquery','bootstrap', 'exifRestorer'],
         $(function () {
             var $inputField = $('#photo');
 
+            var $executor = $('#executor');
+            var $activity = $('#activity');
+
+            $executor.on('change', function (e) {
+                if ($executor.val() == '') return;
+                $activity.html('');
+                var items = window.data[$executor.val()];
+                if (items.length > 1) {
+                    $activity.append($('<option>', {
+                        value: '',
+                        text: '[ ... выберите из списка ... ]'
+                    }));
+                }
+                for (var key in items) {
+                    $activity.append($('<option>', {
+                        value: items[key],
+                        text: items[key]
+                    }));
+                }
+            });
+            for (var key in window.data) {
+                $executor.append($('<option>', {
+                    value: key,
+                    text: key
+                }));
+            };
+
             $('#form-save').on('click', function (e) {
                 var file = $inputField[0].files[0];
         

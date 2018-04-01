@@ -17,11 +17,8 @@
             </div>
             <div class="col-xs-7 text-right">
                 <div class="form-xs">
-                <select class="form-control" name="executor" {% if selected %}data-filled="1"{% endif %}>
+                <select class="form-control" name="executor" id="executor">
                     <option value="">[ ... выберите из списка ... ]</option>
-                    {% for obj in objects %}
-                    <option value="{{ obj }}">{{ obj }}</option>
-                    {% endfor %}
                 </select>
                 </div>
             </div>
@@ -32,11 +29,8 @@
             </div>
             <div class="col-xs-7 text-right">
                 <div class="form-xs">
-                <select class="form-control" name="activity" {% if selected %}data-filled="1"{% endif %}>
+                <select class="form-control" name="activity" id="activity">
                     <option value="">[ ... выберите из списка ... ]</option>
-                    {% for name in names %}
-                    <option value="{{ name }}">{{ name }}</option>
-                    {% endfor %}
                 </select>
                 </div>
             </div>
@@ -53,7 +47,7 @@
             <div class="col-xs-8"><label>Количество участников</label></div>
             <div class="col-xs-4 text-right">
                 <div class="form-xs">
-                    <input type="text" name="visitors" class="form-control" style="text-align: right" />
+                    <input type="number" name="visitors" class="form-control" style="text-align: right" />
                 </div>
             </div>
         </div><!-- /.row -->
@@ -76,6 +70,9 @@
 {% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript">
+        window.data = {{ collection|tojson }};
+    </script>
     <script type="text/javascript">
         require(['checklist.view']);
     </script>

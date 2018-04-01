@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from constants import UPLOADS_DIR
 from forms import ChecklistForm
 from models import Activity, Report
+from linq import where, select
 
 from application import app, auth, db #pylint: disable=E0401
 
@@ -45,13 +46,15 @@ def checklist(county, district):
     """
     Renders the home page.
     """
-    activities = Activity.query.filter_by(county=county).filter_by(district=district)
-    objects = set([x.executor for x in activities])
-    names = set([x.name for x in activities])
+    activities = Activity.query.filter_by(county=county).filter_by(district=district).all()
+    executors = sorted(set([x.executor for x in activities]))
+    result = dict()
+    for item in executors:
+        result[item] = sorted(
+            set(select(where(activities, lambda x: x.executor == item), lambda f: f.name)))
     return render_template(
         'checklist.html',
-        objects=objects,
-        names=names,
+        collection=result,
         county=county,
         district=district,
         title='Отчет | Активное долголетие'
@@ -68,7 +71,7 @@ def checklist_save():
     if not form.validate_on_submit():
         return 400, 'Bad params'
     photo = form.photo.data
-    filename = uuid4().hex + '.jpg' # + secure_filename(photo.filename).split('.')[1]
+    filename = uuid4().hex + '.jpg'
     # create dir for checklist
     if not os.path.exists(UPLOADS_DIR):
         os.makedirs(UPLOADS_DIR)

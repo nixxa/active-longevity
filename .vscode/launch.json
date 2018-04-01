@@ -54,7 +54,7 @@
                 "FLASK_APP": "${workspaceFolder}/src/application.py",
                 "DB_USER": "longevity",
                 "DB_PASS": "123Qwe",
-                "APP_MODE": "PROD"
+                "APP_MODE": "DEBUG"
             },
             "args": [
                 "run",
