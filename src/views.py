@@ -15,6 +15,10 @@ from models import Activity, Report
 from linq import where, select
 
 from application import app, auth, db #pylint: disable=E0401
+from pagination import Pagination
+
+
+REPORTS_PER_PAGE = 20
 
 
 @app.route('/')
@@ -105,16 +109,21 @@ def checklist_saved(report_id):
     )
 
 
-@app.route('/reports/', methods=['GET'])
+@app.route('/reports/', methods=['GET'], defaults={'page': 1})
+@app.route('/reports/page/<int:page>/', methods=['GET'])
 @auth.login_required
-def reports():
+def reports(page):
     """
     Save verified checklist
     """
-    reports = Report.query.all()
+    reports_count = Report.query.count()
+
+    reports = Report.query.offset((page-1) * REPORTS_PER_PAGE).limit(REPORTS_PER_PAGE)
+    pagination = Pagination(page, REPORTS_PER_PAGE, reports_count)
     return render_template(
         'reports.html',
         reports=reports,
+        pagination=pagination,
         title='Список отчетов | Активное долголетие'
     )
 

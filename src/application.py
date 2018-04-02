@@ -14,6 +14,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_debugtoolbar import DebugToolbarExtension
 
 from config import DevelopmentConfig, ProductionConfig
+from jinja_extentions import register_extentions
 
 def configure_log_handler(app_mode):
     """
@@ -52,12 +53,19 @@ if mode == 'DEBUG':
 else:
     app.config.from_object(ProductionConfig())
 
+# register jinja2 extentions
+register_extentions(app)
+# register database
 db = SQLAlchemy(app)
+# register auth
 auth = HTTPDigestAuth()
+# register CSRF
 csrf = CSRFProtect(app)
+# regionster debug toolbar
 if app.debug:
     toolbar = DebugToolbarExtension(app)
 
+# users list
 users = {
     "admin": "123Qwe",
     "user": "user"
@@ -80,6 +88,8 @@ def inject_debug():
     Inject DEBUG variable to all templates
     """
     return dict(debug=app.debug)
+
+
 
 
 import views #pylint: disable=C0413,W0611

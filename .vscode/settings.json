@@ -19,5 +19,6 @@
     "python.formatting.provider": "autopep8",
     "python.workspaceSymbols.enabled": true,
     "python.workspaceSymbols.ctagsPath": "C:\\Users\\root\\Tools\\ctags58\\ctags.exe",
-    "python.workspaceSymbols.rebuildOnFileSave": true
+    "python.workspaceSymbols.rebuildOnFileSave": true,
+    "html.validate.scripts": false
 }
