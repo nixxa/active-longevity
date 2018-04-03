@@ -90,6 +90,21 @@ def inject_debug():
     return dict(debug=app.debug)
 
 
+@app.teardown_request       
+def teardown_request(exception):
+    """
+    Autocommit session on request teardown
+    """
+    if exception:
+        app.logger.error(exception)
+    try:
+        db.session.commit()
+    except Exception as e:
+        app.logger.error(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+        db.session.remove()
 
 
 import views #pylint: disable=C0413,W0611

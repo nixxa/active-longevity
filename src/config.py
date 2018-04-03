@@ -33,6 +33,7 @@ class DevelopmentConfig(Config):
     Development configuration
     """
     DEBUG = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
 class TestingConfig(Config):

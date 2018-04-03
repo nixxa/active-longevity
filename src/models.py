@@ -34,7 +34,7 @@ class Report(db.Model):
     visitors = db.Column(db.Integer, nullable=False, default=0)
     image_source = db.Column(db.String(1000), nullable=True)
 
-    activity=db.relationship('Activity', backref=db.backref('reports', lazy=True))
+    activity = db.relationship('Activity', backref=db.backref('reports', lazy=True))
 
     def __repr__(self):
         return '<Report id: {}, activity: {}, date: {}>'.format(

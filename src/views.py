@@ -6,8 +6,8 @@ import os
 from datetime import datetime
 from uuid import uuid4
 
-from flask import render_template, request, jsonify
-from werkzeug.utils import secure_filename
+from flask import render_template, jsonify, redirect, send_from_directory
+from sqlalchemy import desc
 
 from constants import UPLOADS_DIR
 from forms import ChecklistForm
@@ -23,7 +23,7 @@ REPORTS_PER_PAGE = 20
 
 @app.route('/')
 @auth.login_required
-def home():
+def home_action():
     """
     Renders the home page.
     """
@@ -46,7 +46,7 @@ def home():
 
 @app.route('/checklist/<county>/<district>/')
 @auth.login_required
-def checklist(county, district):
+def checklist_action(county, district):
     """
     Renders the home page.
     """
@@ -67,7 +67,7 @@ def checklist(county, district):
 
 @app.route('/checklist/save/', methods=['POST'])
 @auth.login_required
-def checklist_save():
+def checklist_save_action():
     """
     Save verified checklist
     """
@@ -82,11 +82,16 @@ def checklist_save():
     filepath = os.path.join(UPLOADS_DIR, filename)
     photo.save(filepath)
     # create report
-    activity = Activity.query.first()
+    activity = Activity.query \
+        .filter_by(county=form.county.data) \
+        .filter_by(district=form.district.data) \
+        .filter_by(executor=form.executor.data) \
+        .filter_by(name=form.activity.data) \
+        .first()
     report = Report(
         activity_id=activity.id,
         visitors=form.visitors.data,
-        image_source='/uploads/{}'.format(filename)
+        image_source=os.path.join('/uploads/{}'.format(filename))
     )
     db.session.add(report)
     db.session.commit()
@@ -95,7 +100,7 @@ def checklist_save():
 
 @app.route('/checklist/<int:report_id>/saved/', methods=['GET'])
 @auth.login_required
-def checklist_saved(report_id):
+def checklist_saved_action(report_id):
     """
     View saved report
     """
@@ -112,13 +117,15 @@ def checklist_saved(report_id):
 @app.route('/reports/', methods=['GET'], defaults={'page': 1})
 @app.route('/reports/page/<int:page>/', methods=['GET'])
 @auth.login_required
-def reports(page):
+def reports_action(page):
     """
     Save verified checklist
     """
     reports_count = Report.query.count()
-
-    reports = Report.query.offset((page-1) * REPORTS_PER_PAGE).limit(REPORTS_PER_PAGE)
+    reports = Report.query \
+        .order_by(desc(Report.created)) \
+        .offset((page-1) * REPORTS_PER_PAGE) \
+        .limit(REPORTS_PER_PAGE)
     pagination = Pagination(page, REPORTS_PER_PAGE, reports_count)
     return render_template(
         'reports.html',
@@ -126,6 +133,15 @@ def reports(page):
         pagination=pagination,
         title='Список отчетов | Активное долголетие'
     )
+
+
+@app.route("/reports/delete/<int:report_id>/<int:page>/")
+def report_delete_action(report_id, page):
+    """
+    Delete selected report and return to reports on same page
+    """
+    Report.query.filter_by(id=report_id).delete()
+    return redirect('/reports/page/{}'.format(page))
 
 
 @app.route('/dashboard/', methods=['GET'])
@@ -140,24 +156,6 @@ def dashboard():
     )
 
 
-@app.route('/file/upload/', methods=['POST'])
-@auth.login_required
-def upload():
-    """
-    Upload and save file
-    """
-    # check if the post request has the file part
-    if 'file' not in request.files:
-        return 'No file part', 500
-    file = request.files['file']
-    # if user does not select file, browser also
-    # submit a empty part without filename
-    if not file or file.filename == '':
-        return 'No selected file', 500
-    filename = secure_filename(file.filename)
-    # create dir for checklist
-    if not os.path.exists(UPLOADS_DIR):
-        os.makedirs(UPLOADS_DIR)
-    filepath = os.path.join(UPLOADS_DIR, filename)
-    file.save(filepath)
-    return '', 200
+@app.route('/uploads/<path:path>')
+def send_js(path):
+    return send_from_directory('uploads', path)

@@ -12,6 +12,10 @@ module.exports = function (grunt) {
                     ext: '.min.js',
                     extDot: 'last'
                 }]
+            },
+            exif_reader: {
+                src: 'src/static/content/exif-js/exif.js',
+                dest: 'src/static/content/exif-js/exif.min.js'
             }
         }
     });

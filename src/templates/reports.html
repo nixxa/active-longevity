@@ -29,51 +29,12 @@
             <td>{{ rep.activity.executor }}</td>
             <td>{{ rep.created.strftime("%d.%m.%Y") }}</td>
             <td>{{ rep.activity.planned_visitors }} / {{ rep.visitors }}</td>
-            <td><a href="#" class="js-view-photo">просмотр</a></td>
+            <td><a href="#" class="js-view-photo" data-source="{{rep.image_source}}">просмотр</a></td>
             <td>
-                <a href="#">edit</a> / <a href="#">remove</a>
+                <a href="#">edit</a> / <a href="/reports/delete/{{rep.id}}/{{pagination.page}}/">remove</a>
             </td>
         </tr>
         {% endfor %}
-        <tr>
-            <td>2</td>
-            <td>Обучение</td>
-            <td>Здорово жить</td>
-            <td>ЗелАО / Савелки</td>
-            <td>ГБУ ТЦСО "Зеленоградский" филиал "Крюково"</td>
-            <td>15.03.2008</td>
-            <td>25 / 25</td>
-            <td><a href="#">просмотр</a></td>
-            <td>
-                <a href="#">edit</a> / <a href="#">remove</a>
-            </td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Физическая активность</td>
-            <td>ОФП</td>
-            <td>ЗелАО / Матушки</td>
-            <td>ГБПОУ ПК № 50 им. Дважды Героя Социалистического труда Н.А. Злобина</td>
-            <td>15.03.2008</td>
-            <td>75 / 53</td>
-            <td><a href="#">просмотр</a></td>
-            <td>
-                <a href="#">edit</a> / <a href="#">remove</a>
-            </td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Физическая активность</td>
-            <td>Гимпастика</td>
-            <td>ЗелАО / Матушки</td>
-            <td>ГБУ ТЦСО "Зеленоградский" филиал "Солнечный"</td>
-            <td>15.03.2008</td>
-            <td>75 / 53</td>
-            <td><a href="#">просмотр</a></td>
-            <td>
-                <a href="#">edit</a> / <a href="#">remove</a>
-            </td>
-        </tr>
     </tbody>
     <tfoot>
         <tr>
@@ -94,14 +55,10 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-8">
-                            <img src="/static/img/photo.png" style="width: 100%">
+                            <img src="" style="width: 100%" id="image-preview">
                         </div>
-                        <div class="col-xs-4">
-                            <p>
-                                Дата: 12.03.2018 14:01<br/>
-                                Место: Зеленоград, №1253<br/>
-                                Камера: Samsung SM-A520F
-                            </p>
+                        <div class="col-xs-4" id="image-exif">
+                            
                         </div>
                     </div>                    
                 </div>
@@ -113,15 +70,29 @@
 
 {% block scripts %}
     <script type="text/javascript">
-        require(['moment', 'jquery', 'bootstrap'], function (moment, $, bootstrap) {
+        require(['jquery', 'bootstrap', 'exif-reader'], function ($, bootstrap, exif) {
             $(function () {
-                moment.locale('ru');
-                $.each($('.js-datetime-from'), function () {
-                    var $this = $(this);
-                    $this.text(moment.utc($this.data('datetime')).fromNow());
+                $('#image-preview').on('load', function (e) {
+                    if ($(this).attr('src') == '') return;
+                    var $container = $('#image-exif');
+                    EXIF.getData($('#image-preview')[0], function() {
+                        for (var key in EXIF.Tags) {
+                            var tag = EXIF.Tags[key];
+                            var tagValue = EXIF.getTag(this, tag);
+                            if (tagValue != undefined) {
+                                var row = $container.append('<dl></dl>');
+                                row.append('<dt>' + tag + '</dt>');
+                                row.append('<dd>' + tagValue + '</dd>');
+                            }
+                        }
+                    });
+                }).each(function() {
+                    if(this.complete) $(this).load();
                 });
 
                 $('.js-view-photo').click(function (e) {
+                    $('#image-preview').attr('src', $(this).data('source'));
+
                     $('#myModal').modal('toggle');
                 })
             });

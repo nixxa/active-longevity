@@ -27,6 +27,7 @@ require.config({
             'https://code.highcharts.com/highcharts',
             '/static/content/highcharts-6.0.7/highcharts'
         ],
+        'exif-reader': '/static/content/exif-js/exif.min',
         'checklist.view': '/static/build/checklist.view.min',
         'dashboard.view': '/static/build/dashboard.view.min'
 	}
