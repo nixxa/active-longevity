@@ -5,7 +5,7 @@
 
 <h2>Отчеты по мероприятиям</h2>
 
-<table class="table table-hover">
+<table class="table table-hover" id="reports">
     <thead>
         <tr>
             <th>##</th>
@@ -20,6 +20,25 @@
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td></td>
+            <td>
+                {{ form.category(class_='form-control js-selector') }}
+            </td>
+            <td>
+                {{ form.name(class_='form-control js-selector') }}
+            </td>
+            <td>
+                {{ form.district(class_='form-control js-selector') }}
+            </td>
+            <td>
+                {{ form.executor(class_='form-control js-selector') }}
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
         {% for rep in reports %}
         <tr>
             <td>{{ rep.id }}</td>
@@ -27,11 +46,11 @@
             <td>{{ rep.activity.name }}</td>
             <td>{{ rep.activity.county  }} / {{ rep.activity.district }}</td>
             <td>{{ rep.activity.executor }}</td>
-            <td>{{ rep.created.strftime("%d.%m.%Y") }}</td>
+            <td>{{ rep.issued.strftime("%d.%m.%Y") }}</td>
             <td>{{ rep.activity.planned_visitors }} / {{ rep.visitors }}</td>
             <td><a href="#" class="js-view-photo" data-source="{{rep.image_source}}">просмотр</a></td>
             <td>
-                <a href="#">edit</a> / <a href="/reports/delete/{{rep.id}}/{{pagination.page}}/">remove</a>
+                edit / <a href="/reports/delete/{{rep.id}}/{{pagination.page}}/">remove</a>
             </td>
         </tr>
         {% endfor %}
@@ -46,56 +65,28 @@
 </table>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Просмотр фотографии</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-xs-8">
-                            <img src="" style="width: 100%" id="image-preview">
-                        </div>
-                        <div class="col-xs-4" id="image-exif">
-                            
-                        </div>
-                    </div>                    
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Просмотр фотографии</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-8" id="image-preview">
+                    </div>
+                    <div class="col-xs-4" id="image-exif">
+                    </div>
+                </div>                    
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript">
-        require(['jquery', 'bootstrap', 'exif-reader'], function ($, bootstrap, exif) {
-            $(function () {
-                $('#image-preview').on('load', function (e) {
-                    if ($(this).attr('src') == '') return;
-                    var $container = $('#image-exif');
-                    EXIF.getData($('#image-preview')[0], function() {
-                        for (var key in EXIF.Tags) {
-                            var tag = EXIF.Tags[key];
-                            var tagValue = EXIF.getTag(this, tag);
-                            if (tagValue != undefined) {
-                                var row = $container.append('<dl></dl>');
-                                row.append('<dt>' + tag + '</dt>');
-                                row.append('<dd>' + tagValue + '</dd>');
-                            }
-                        }
-                    });
-                }).each(function() {
-                    if(this.complete) $(this).load();
-                });
-
-                $('.js-view-photo').click(function (e) {
-                    $('#image-preview').attr('src', $(this).data('source'));
-
-                    $('#myModal').modal('toggle');
-                })
-            });
-        });
+        require(['reports.view']);
     </script>
 {% endblock %}

@@ -31,6 +31,7 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    issued = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     visitors = db.Column(db.Integer, nullable=False, default=0)
     image_source = db.Column(db.String(1000), nullable=True)
 

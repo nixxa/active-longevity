@@ -6,11 +6,12 @@ import os
 from datetime import datetime
 from uuid import uuid4
 
-from flask import render_template, jsonify, redirect, send_from_directory
+from flask import render_template, jsonify, redirect, send_from_directory, request
 from sqlalchemy import desc
+from sqlalchemy.orm import load_only, joinedload
 
 from constants import UPLOADS_DIR
-from forms import ChecklistForm
+from forms import ChecklistForm, FilterReportsForm
 from models import Activity, Report
 from linq import where, select
 
@@ -91,6 +92,7 @@ def checklist_save_action():
     report = Report(
         activity_id=activity.id,
         visitors=form.visitors.data,
+        issued=form.date.data,
         image_source=os.path.join('/uploads/{}'.format(filename))
     )
     db.session.add(report)
@@ -121,16 +123,39 @@ def reports_action(page):
     """
     Save verified checklist
     """
-    reports_count = Report.query.count()
-    reports = Report.query \
-        .order_by(desc(Report.created)) \
+    form = FilterReportsForm(request.values)
+    all_reports_query = Report.query.join(Report.activity, aliased=True)
+    if form.category.data is not None and form.category.data != 'None':
+        all_reports_query = all_reports_query.filter_by(category=form.category.data)
+    if form.name.data is not None and form.name.data != 'None':
+        all_reports_query = all_reports_query.filter_by(name=form.name.data)
+    if form.district.data is not None and form.district.data != 'None':
+        all_reports_query = all_reports_query.filter_by(district=form.district.data)
+    if form.executor.data is not None and form.executor.data != 'None':
+        all_reports_query = all_reports_query.filter_by(executor=form.executor.data)
+    reports_count = all_reports_query.count()
+
+    all_reports_query = all_reports_query \
+        .order_by(desc(Report.created))
+    reports = all_reports_query \
         .offset((page-1) * REPORTS_PER_PAGE) \
         .limit(REPORTS_PER_PAGE)
     pagination = Pagination(page, REPORTS_PER_PAGE, reports_count)
+
+    query = Activity.query.options(load_only('category', 'name', 'district', 'executor')).all()
+    form.category.choices = [('None', 'все')] + \
+        [(x, x) for x in sorted(set([row.category for row in query]))]
+    form.name.choices = [('None', 'все')] + \
+        [(x, x) for x in sorted(set([row.name for row in query]))]
+    form.district.choices = [('None', 'все')] + \
+        [(x, x) for x in sorted(set([row.district for row in query]))]
+    form.executor.choices = [('None', 'все')] + \
+        [(x, x) for x in sorted(set([row.executor for row in query]))]
     return render_template(
         'reports.html',
         reports=reports,
         pagination=pagination,
+        form=form,
         title='Список отчетов | Активное долголетие'
     )
 

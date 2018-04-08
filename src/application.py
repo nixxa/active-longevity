@@ -62,8 +62,8 @@ auth = HTTPDigestAuth()
 # register CSRF
 csrf = CSRFProtect(app)
 # regionster debug toolbar
-if app.debug:
-    toolbar = DebugToolbarExtension(app)
+#if app.debug:
+#    toolbar = DebugToolbarExtension(app)
 
 # users list
 users = {

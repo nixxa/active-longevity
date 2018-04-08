@@ -3,9 +3,7 @@ require.config({
 	urlArgs: 'r=v1',
 	shim: {
 		'bootstrap': { 'deps': ['jquery'] },
-		'date-input': { 'deps': ['jquery'] },
-		'dropzone': { 'deps' : ['jquery'] },
-		'datatables': { 'deps': ['jquery'] }
+        'select2': { 'deps': ['jquery'] }
 	},
 	paths: {
 		'jquery': [
@@ -17,18 +15,15 @@ require.config({
 			'/static/content/bootstrap-3.3.6/js/bootstrap'
 		],
 		'moment': '/static/content/momentjs/moment-with-locales',
-		'date-input': '/static/content/datetime-input/js/date-input',
-		'dropzone': '/static/content/dropzonejs/dropzone',
-		'audiojs': '/static/content/audiojs/audio.min',
-		'datatables': '/static/content/datatables/datatables',
-        'pica': '/static/content/pica/pica.min',
         'exifRestorer': '/static/content/exif-restorer/exifRestorer',
         'highcharts': [
             'https://code.highcharts.com/highcharts',
             '/static/content/highcharts-6.0.7/highcharts'
         ],
+        'select2': '/static/content/select2-4.0.5/js/select2.min',
         'exif-reader': '/static/content/exif-js/exif',
         'checklist.view': '/static/scripts/checklist.view',
-        'dashboard.view': '/static/scripts/dashboard.view'
+        'dashboard.view': '/static/scripts/dashboard.view',
+        'reports.view': '/static/scripts/reports.view'
 	}
 });

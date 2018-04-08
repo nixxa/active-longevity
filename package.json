@@ -21,6 +21,6 @@
   "homepage": "https://github.com/nixxa/active-longevity#readme",
   "devDependencies": {
     "grunt": "^1.0.2",
-    "grunt-contrib-uglify": "^3.3.0"
+    "grunt-contrib-uglify-es": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#harmony"
   }
 }

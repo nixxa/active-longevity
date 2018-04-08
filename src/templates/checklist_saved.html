@@ -4,7 +4,7 @@
 <h2>Отчет о мероприятии сохранен</h2>
 <div id="js-content" data-uid="{{ report.id }}">
     <ul class="list-unstyled">
-        <li>Номер отчета: <a href="/checklist/view/{{ report.id }}">#{{ report.id }}</a></li>
+        <li>Номер отчета: #{{ report.id }}</li>
         <li>Мероприятие: {{ report.activity.name }}</li>
         <li>Дата: {{ report.created.strftime('%d-%m-%Y') }}</li>
     </ul>
