@@ -175,12 +175,69 @@ def dashboard():
     """
     Dashboard with graphs
     """
+    query = Activity.query.options(load_only('category')).all()
+    categories = sorted(set([row.name for row in query]))
+    counties = sorted(set([row.county for row in query]))
+    today_reports = Report.query.filter_by(issued=datetime.now().date()).all()
+    today_plan = []
+    today_fact = []
+    series = []
+    for cat in categories:
+        today_fact.append(
+            sum(
+                x for x in select(
+                    where(today_reports, lambda x: x.activity.name == cat),
+                    lambda x: x.visitors)
+            )
+        )
+        today_plan.append(
+            sum(
+                x for x in select(
+                    where(today_reports, lambda x: x.activity.name == cat),
+                    lambda x: x.activity.planned_visitors)
+            )
+        )
+        counties_data = []
+        for county in counties:
+            counties_data.append(
+                sum(
+                    x for x in select(
+                        where(
+                            today_reports,
+                            lambda x: x.activity.county == county and x.activity.name == cat),
+                        lambda x: x.visitors)
+                )
+            )
+        series.append({
+            'name': cat,
+            'data': counties_data,
+            'stack': 'v'
+        })
+    result = {
+        'today': {
+            'chart1': {
+                'categories': categories,
+                'fact': today_fact,
+                'plan': today_plan
+            },
+            'chart2': {
+                'districts': counties,
+                'series': series
+            }
+        },
+        'aggregate': {
+        }
+    }
     return render_template(
         'dashboard.html',
+        data=result,
         title='Графики | Активное долголетие'
     )
 
 
 @app.route('/uploads/<path:path>')
-def send_js(path):
+def send_uplods(path):
+    """
+    Return uploads
+    """
     return send_from_directory('uploads', path)

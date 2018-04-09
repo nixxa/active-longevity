@@ -71,9 +71,8 @@
 
 {% block scripts %}
     <script type="text/javascript">
-        window.data = {{ collection|tojson }};
-    </script>
-    <script type="text/javascript">
-        require(['checklist.view']);
+        require(['checklist.view'], function(view) {
+            view.initialize({{ collection|tojson }});
+        });
     </script>
 {% endblock %}

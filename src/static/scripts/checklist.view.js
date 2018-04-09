@@ -108,7 +108,7 @@ define(['require','jquery','bootstrap', 'exifRestorer'],
         }
 
         // document.onload
-        $(function () {
+        function onLoad(collection) {
             var $inputField = $('#photo');
 
             var $executor = $('#executor');
@@ -117,7 +117,7 @@ define(['require','jquery','bootstrap', 'exifRestorer'],
             $executor.on('change', function (e) {
                 if ($executor.val() == '') return;
                 $activity.html('');
-                var items = window.data[$executor.val()];
+                var items = collection[$executor.val()];
                 if (items.length > 1) {
                     $activity.append($('<option>', {
                         value: '',
@@ -131,7 +131,7 @@ define(['require','jquery','bootstrap', 'exifRestorer'],
                     }));
                 }
             });
-            for (var key in window.data) {
+            for (var key in collection) {
                 $executor.append($('<option>', {
                     value: key,
                     text: key
@@ -149,6 +149,14 @@ define(['require','jquery','bootstrap', 'exifRestorer'],
                     }
                 }
             });
-        });
+        }
+
+        return {
+            initialize: function (collection) {
+                $(document).ready(function () {
+                    onLoad(collection);
+                });
+            }
+        }
     }
 );
