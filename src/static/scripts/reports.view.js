@@ -1,7 +1,7 @@
 /**
  * Reports view scripts
  */
-define(['jquery', 'bootstrap', 'exif-reader'], function ($, bootstrap, exif) {
+define(['jquery', 'bootstrap', 'exif-reader', 'queryString'], function ($, bootstrap, exif, qs) {
     'use strict';
 
     // render item
@@ -61,38 +61,8 @@ define(['jquery', 'bootstrap', 'exif-reader'], function ($, bootstrap, exif) {
             var $target = $(e.target);
             var name = $target.attr('name');
             var value = $target.val();
-            if (window.location.href.indexOf('?') >= 0) {
-                var queryString = window.location.href.substring(window.location.href.indexOf('?')+1);
-                if (queryString == '') {
-                    window.location.href = `/reports/?${name}=${value}`;
-                    return;
-                }
-                var parts = queryString.split('&');
-                var result = '';
-                var used = false;
-                for (var i = 0; i < parts.length; i++) {
-                    var pair = parts[i].split('=');
-                    if (pair[0] == name) {
-                        used = true;
-                        if (value == 'None') {
-                            continue;
-                        } else {
-                            result = result + `${name}=${value}` + '&';
-                        }                        
-                    } else {
-                        result = result + parts[i] + '&';
-                    }
-                }
-                if (!used) {
-                    result = result + `${name}=${value}`;
-                }
-                if (result.endsWith('&')) {
-                    result = result.substring(0, result.length - 1);
-                }
-                window.location.href = '?' + result;
-            } else {
-                window.location.href = `/reports/?${name}=${value}`;
-            }
+            window.location.href = qs.generateQueryString(
+                window.location.href, name, value, 'reports');
         });
     });
 });

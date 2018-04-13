@@ -3,6 +3,7 @@
 Views module
 """
 import os
+import types
 from datetime import datetime
 from uuid import uuid4
 
@@ -11,16 +12,16 @@ from sqlalchemy import desc
 from sqlalchemy.orm import load_only, joinedload
 
 from constants import UPLOADS_DIR
-from forms import ChecklistForm, FilterReportsForm
+from forms import ChecklistForm, FilterReportsForm, ActivityForm
 from models import Activity, Report
 from linq import where, select
 
 from application import app, auth, db #pylint: disable=E0401
 from pagination import Pagination
+from functions import filter_by_form, fill_filter_form
 
 
 REPORTS_PER_PAGE = 20
-
 
 @app.route('/')
 @auth.login_required
@@ -73,7 +74,7 @@ def checklist_save_action():
     Save verified checklist
     """
     form = ChecklistForm()
-    if not form.validate_on_submit():
+    if not form.validate():
         return 400, 'Bad params'
     photo = form.photo.data
     filename = uuid4().hex + '.jpg'
@@ -125,14 +126,7 @@ def reports_action(page):
     """
     form = FilterReportsForm(request.values)
     all_reports_query = Report.query.join(Report.activity, aliased=True)
-    if form.category.data is not None and form.category.data != 'None':
-        all_reports_query = all_reports_query.filter_by(category=form.category.data)
-    if form.name.data is not None and form.name.data != 'None':
-        all_reports_query = all_reports_query.filter_by(name=form.name.data)
-    if form.district.data is not None and form.district.data != 'None':
-        all_reports_query = all_reports_query.filter_by(district=form.district.data)
-    if form.executor.data is not None and form.executor.data != 'None':
-        all_reports_query = all_reports_query.filter_by(executor=form.executor.data)
+    all_reports_query = filter_by_form(all_reports_query, form)
     reports_count = all_reports_query.count()
 
     all_reports_query = all_reports_query \
@@ -142,15 +136,7 @@ def reports_action(page):
         .limit(REPORTS_PER_PAGE)
     pagination = Pagination(page, REPORTS_PER_PAGE, reports_count)
 
-    query = Activity.query.options(load_only('category', 'name', 'district', 'executor')).all()
-    form.category.choices = [('None', 'все')] + \
-        [(x, x) for x in sorted(set([row.category for row in query]))]
-    form.name.choices = [('None', 'все')] + \
-        [(x, x) for x in sorted(set([row.name for row in query]))]
-    form.district.choices = [('None', 'все')] + \
-        [(x, x) for x in sorted(set([row.district for row in query]))]
-    form.executor.choices = [('None', 'все')] + \
-        [(x, x) for x in sorted(set([row.executor for row in query]))]
+    fill_filter_form(form)
     return render_template(
         'reports.html',
         reports=reports,
@@ -168,6 +154,51 @@ def report_delete_action(report_id, page):
     Report.query.filter_by(id=report_id).delete()
     return redirect('/reports/page/{}'.format(page))
 
+
+@app.route('/activities/', methods=['GET'], defaults={'page': 1})
+@app.route('/activities/page/<int:page>/', methods=['GET'])
+@auth.login_required
+def activities_action(page):
+    """
+    Activities
+    """
+    form = FilterReportsForm(request.values)
+    query = Activity.query
+    query = filter_by_form(query, form)
+    total_count = query.count()
+    activities = query \
+        .order_by(Activity.id) \
+        .offset((page-1) * REPORTS_PER_PAGE) \
+        .limit(REPORTS_PER_PAGE)
+
+    pagination = Pagination(page, REPORTS_PER_PAGE, total_count)
+    fill_filter_form(form)
+    return render_template(
+        'activities.html',
+        activities=activities,
+        pagination=pagination,
+        form=form,
+        title='Список мероприятий | Активное долголение'
+    )
+
+
+@app.route('/activities/edit/<int:activity_id>/', methods=['GET','POST'])
+def activity_edit_action(activity_id):
+    """
+    Edit activity
+    """
+    activity = Activity.query.get(activity_id)
+    form = ActivityForm(request.values, obj=activity)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(activity)
+        db.session.add(activity)
+        db.session.commit()
+        return redirect('/activities/')
+    return render_template(
+        'activity.html',
+        form=form,
+        title='Редактирование мероприятия | Активное долголение'
+    )
 
 @app.route('/dashboard/', methods=['GET'])
 @auth.login_required

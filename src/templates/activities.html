@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% from "parts/pagination.html" import render_pagination %}
+
+{% block content %}
+
+<h2>Мероприятия</h2>
+
+<table class="table table-hover" id="activities">
+    <thead>
+            <tr>
+                <th>##</th>
+                <th>Направление</th>
+                <th>Название</th>
+                <th>Район</th>
+                <th>Место проведения</th>
+                <th>Кол-во участников в группе</th>
+                <th></th>
+            </tr>
+        </thead>
+    <tbody>
+            <tr>
+                <td></td>
+                <td>
+                    {{ form.category(class_='form-control js-selector') }}
+                </td>
+                <td>
+                    {{ form.name(class_='form-control js-selector') }}
+                </td>
+                <td>
+                    {{ form.district(class_='form-control js-selector') }}
+                </td>
+                <td>
+                    {{ form.executor(class_='form-control js-selector') }}
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% for item in activities %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.county  }} / {{ item.district }}</td>
+            <td>{{ item.executor }}<br/>{{ item.place }}</td>
+            <td>{{ item.planned_visitors }}</td>
+            <td>
+                <a href="/activities/edit/{{item.id}}/">edit</a> / 
+                <a href="/activities/delete/{{item.id}}/{{pagination.page}}/">remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7">
+                {{ render_pagination(pagination) }}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        require(['activities.view'], function (view) {
+            view.initialize();
+        });
+    </script>
+{% endblock %}

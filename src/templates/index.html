@@ -11,45 +11,15 @@
                 <h4>{{ county }}</h4>
             </div>
             {% for item in districts[county] %}
-                <div class="media" data-num="0" data-title="Крюково">
-                    
+                <div class="media">                    
                     <div class="media-body">
                         <h4 class="media-heading">
                             <a href="/checklist/{{county}}/{{item}}/">{{ item }}</a>
                         </h4>
-                    </div>
-                    
+                    </div><!-- // div.media -->                    
                 </div>
             {% endfor %}
         {% endfor %}
-        <!-- <div class="media" data-num="0" data-title="Матушкино">
-            <div class="media-body">
-                <h4 class="media-heading">
-                    <a href="/checklist/0/0/">Матушкино</a>
-                </h4>
-            </div>
-        </div>
-        <div class="media" data-num="0" data-title="Матушкино">
-            <div class="media-body">
-                <h4 class="media-heading">
-                    <a href="/checklist/0/0/">Савелки</a>
-                </h4>
-            </div>
-        </div>
-        <div class="media" data-num="0" data-title="Матушкино">
-            <div class="media-body">
-                <h4 class="media-heading">
-                    <a href="/checklist/0/0/">Силино</a>
-                </h4>
-            </div>
-        </div>
-        <div class="media" data-num="0" data-title="Матушкино">
-            <div class="media-body">
-                <h4 class="media-heading">
-                    <a href="/checklist/0/0/">Старое крюково</a>
-                </h4>
-            </div>
-        </div> -->
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4">
         <div class="page-header">

@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% from "parts/field.html" import render_field %}
+
+{% block content %}
+<h2>Редактирование мероприятия</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <form action="" method="POST" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{ form.id }}
+            {{ render_field(form.category) }}
+            {{ render_field(form.name) }}
+            {{ render_field(form.place) }}
+            {{ render_field(form.executor) }}
+            {{ render_field(form.address) }}
+            {{ render_field(form.county) }}
+            {{ render_field(form.district) }}
+            {{ render_field(form.planned_visitors) }}
+            <di class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary pull-right" />
+                <a href="/activities/" class="btn btn-default pull-right mr5">Отмена</a>
+                
+            </di>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
