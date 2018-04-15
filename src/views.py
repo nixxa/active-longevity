@@ -4,27 +4,34 @@ Views module
 """
 import os
 import types
+import hashlib
+import random
+import string
 from datetime import datetime
 from uuid import uuid4
 
 from flask import render_template, jsonify, redirect, send_from_directory, request
 from sqlalchemy import desc
 from sqlalchemy.orm import load_only, joinedload
+from sqlalchemy.exc import IntegrityError
 
 from constants import UPLOADS_DIR
-from forms import ChecklistForm, FilterReportsForm, ActivityForm
-from models import Activity, Report
+from forms import (
+    ChecklistForm, FilterReportsForm, ActivityForm, RegisterUserForm, RegisterConfirmForm)
+from models import Activity, Report, User, USER_ROLE_REPORTER, USER_ROLE_ADMIN, USER_ROLE_CUSTOMER
 from linq import where, select
 
-from application import app, auth, db #pylint: disable=E0401
+from application import app, db, config #pylint: disable=E0401
 from pagination import Pagination
 from functions import filter_by_form, fill_filter_form
+from sendmail import MailProvider
+from security import authorize
 
 
 REPORTS_PER_PAGE = 20
+TITLE = 'Активное долголетие'
 
 @app.route('/')
-@auth.login_required
 def home_action():
     """
     Renders the home page.
@@ -42,12 +49,12 @@ def home_action():
         'index.html',
         counties=counties,
         districts=districts,
-        title='Районы | Активное долголетие'
+        title='Районы | %s' % TITLE
     )
 
 
 @app.route('/checklist/<county>/<district>/')
-@auth.login_required
+@authorize([USER_ROLE_REPORTER, USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def checklist_action(county, district):
     """
     Renders the home page.
@@ -63,12 +70,12 @@ def checklist_action(county, district):
         collection=result,
         county=county,
         district=district,
-        title='Отчет | Активное долголетие'
+        title='Отчет | %s' % TITLE
     )
 
 
 @app.route('/checklist/save/', methods=['POST'])
-@auth.login_required
+@authorize([USER_ROLE_REPORTER, USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def checklist_save_action():
     """
     Save verified checklist
@@ -102,7 +109,7 @@ def checklist_save_action():
 
 
 @app.route('/checklist/<int:report_id>/saved/', methods=['GET'])
-@auth.login_required
+@authorize([USER_ROLE_REPORTER, USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def checklist_saved_action(report_id):
     """
     View saved report
@@ -113,13 +120,13 @@ def checklist_saved_action(report_id):
         uid=str(report.id),
         save_date=datetime.now(),
         report=report,
-        title='Отчет | Активное долголетие'
+        title='Отчет | %s' % TITLE
     )
 
 
 @app.route('/reports/', methods=['GET'], defaults={'page': 1})
 @app.route('/reports/page/<int:page>/', methods=['GET'])
-@auth.login_required
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def reports_action(page):
     """
     Save verified checklist
@@ -142,11 +149,12 @@ def reports_action(page):
         reports=reports,
         pagination=pagination,
         form=form,
-        title='Список отчетов | Активное долголетие'
+        title='Список отчетов | %s' % TITLE
     )
 
 
 @app.route("/reports/delete/<int:report_id>/<int:page>/")
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def report_delete_action(report_id, page):
     """
     Delete selected report and return to reports on same page
@@ -157,7 +165,7 @@ def report_delete_action(report_id, page):
 
 @app.route('/activities/', methods=['GET'], defaults={'page': 1})
 @app.route('/activities/page/<int:page>/', methods=['GET'])
-@auth.login_required
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def activities_action(page):
     """
     Activities
@@ -178,11 +186,12 @@ def activities_action(page):
         activities=activities,
         pagination=pagination,
         form=form,
-        title='Список мероприятий | Активное долголение'
+        title='Список мероприятий | %s' % TITLE
     )
 
 
 @app.route('/activities/edit/<int:activity_id>/', methods=['GET','POST'])
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def activity_edit_action(activity_id):
     """
     Edit activity
@@ -197,11 +206,11 @@ def activity_edit_action(activity_id):
     return render_template(
         'activity.html',
         form=form,
-        title='Редактирование мероприятия | Активное долголение'
+        title='Редактирование мероприятия | %s' % TITLE
     )
 
 @app.route('/dashboard/', methods=['GET'])
-@auth.login_required
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def dashboard():
     """
     Dashboard with graphs
@@ -262,7 +271,7 @@ def dashboard():
     return render_template(
         'dashboard.html',
         data=result,
-        title='Графики | Активное долголетие'
+        title='Графики | %s' % TITLE
     )
 
 
@@ -272,3 +281,108 @@ def send_uplods(path):
     Return uploads
     """
     return send_from_directory('uploads', path)
+
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register_action():
+    """
+    Register user action
+    """
+    form = RegisterUserForm(request.values)
+    if request.method == 'POST' and form.validate():
+        secret = config.SECRET_KEY
+        passw = form.password.data
+        hashstr = hashlib.sha256('{}:{}'.format(passw, secret).encode('utf-8')).hexdigest()
+        code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        user = User(
+            guid=uuid4().hex,
+            created=datetime.utcnow(),
+            email=form.email.data,
+            password_secret=secret,
+            password_hash=hashstr,
+            confirm_code=code,
+            fullname=form.fullname.data,
+            role=USER_ROLE_REPORTER,
+            disabled=True,
+            confirmed=False
+        )
+        db.session.add(user)
+        try:
+            db.session.commit()
+            mail = MailProvider()
+            mail.send_registration_code(user)
+        except IntegrityError as error:
+            return 500, str(error)
+        return redirect('/register/{}/confirm/'.format(user.guid))
+    return render_template(
+        'register.html',
+        form=form,
+        title='Регистрация | %s' % TITLE
+    )
+
+
+@app.route('/register/<user_id>/confirm/', methods=['GET', 'POST'], defaults={'code': None})
+@app.route('/register/<user_id>/<code>/confirm/')
+def register_confirm_action(user_id, code):
+    """
+    Confirmation for user registration
+    """
+    user = User.query.get(user_id)
+    form = RegisterConfirmForm(request.values, obj=user)
+    if request.method == 'POST' and form.validate():
+        code = form.code.data
+    if user.confirm_code == code:
+        user.confirmed = True
+        db.session.commit()
+        return redirect('/register/{}/confirmed/'.format(user.guid))
+    return render_template(
+        'register_confirm.html',
+        form=form,
+        title='Подтверждение регистрации | %s' % TITLE
+    )
+
+
+@app.route('/register/<user_id>/confirmed/')
+def register_confirmed_action(user_id):
+    """
+    Confirmed page
+    """
+    user = User.query.get(user_id)
+    return render_template(
+        'register_confirmed.html',
+        title='Подтверждение регистрации | %s' % TITLE
+    )
+
+
+@app.route('/users/', defaults={'page': 1})
+@app.route('/users/page/<int:page>/')
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
+def users_action(page):
+    """
+    Users view
+    """
+    query = User.query
+    total_count = query.count()
+    users = query \
+        .order_by(User.email) \
+        .offset((page-1) * REPORTS_PER_PAGE) \
+        .limit(REPORTS_PER_PAGE)
+
+    pagination = Pagination(page, REPORTS_PER_PAGE, total_count)
+    return render_template(
+        'users.html',
+        users=users,
+        pagination=pagination,
+        title='Пользователи | %s' % TITLE
+    )
+
+
+@app.route('/users/<user_id>/<int:page>/toggle/')
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
+def toggle_user_action(user_id, page):
+    """
+    Toggle user status
+    """
+    user = User.query.get(user_id)
+    user.disabled = not user.disabled
+    return redirect('/users/page/{}'.format(page))

@@ -3,7 +3,14 @@
 {% block content %}
 <h2>
     <span>Выберите район</span>
+    
 </h2>
+{% if not request.authorization %}
+    <p>
+        для отправки отчета требуется <a href="/register/">регистрация</a>.
+    </p>
+{% endif %}
+
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-4">
         {% for county in counties %}
@@ -16,7 +23,7 @@
                         <h4 class="media-heading">
                             <a href="/checklist/{{county}}/{{item}}/">{{ item }}</a>
                         </h4>
-                    </div><!-- // div.media -->                    
+                    </div><!-- // div.media -->
                 </div>
             {% endfor %}
         {% endfor %}

@@ -18,6 +18,11 @@ class Config(object):
     SECRET_KEY = "whqw457891dnqqwr1"
     CSRF_ENABLED = True
     LOGGER_HANDLER_POLICY = 'always'
+    SENDGRID_API_KEY = ''
+    SESSION_TYPE = 'sqlalchemy'
+    DEFAULT_USER = os.environ.get('DEF_USER', 'user')
+    DEFAULT_PASS = os.environ.get('DEF_PASS', 'user')
+    DEFAULT_ROLE = os.environ.get('DEF_ROLE', 'admin')
 
 
 class ProductionConfig(Config):

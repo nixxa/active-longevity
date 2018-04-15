@@ -8,8 +8,8 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 
 from flask import Flask
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from flask_httpauth import HTTPDigestAuth
 from flask_wtf.csrf import CSRFProtect
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -41,45 +41,34 @@ def configure_log_handler(app_mode):
 
 mode = os.environ.get('APP_MODE', 'DEBUG')
 
+# create flask app
 app = Flask(__name__)
+# configure logger
 log_handler = configure_log_handler(mode)
 del app.logger.handlers[:]
 app.logger.addHandler(log_handler)
 app.logger.setLevel(logging.DEBUG)
-
+# configure application
 app.logger.info('Starting application in %s mode', mode)
+config = None
 if mode == 'DEBUG':
-    app.config.from_object(DevelopmentConfig())
+    config = DevelopmentConfig()
+    app.config.from_object(config)
 else:
-    app.config.from_object(ProductionConfig())
+    config = ProductionConfig()
+    app.config.from_object(config)
 
 # register jinja2 extentions
 register_extentions(app)
 # register database
 db = SQLAlchemy(app)
-# register auth
-auth = HTTPDigestAuth()
 # register CSRF
 csrf = CSRFProtect(app)
 # regionster debug toolbar
 #if app.debug:
 #    toolbar = DebugToolbarExtension(app)
-
-# users list
-users = {
-    "admin": "123Qwe",
-    "user": "user"
-}
-
-
-@auth.get_password
-def get_pw(username):
-    """
-    Password validation
-    """
-    if username in users:
-        return users.get(username)
-    return None
+session = Session(app)
+session.app.session_interface.db.create_all()
 
 
 @app.context_processor
@@ -107,4 +96,4 @@ def teardown_request(exception):
         db.session.remove()
 
 
-import views #pylint: disable=C0413,W0611
+import views #pylint: disable=C0413,W0611,C0410

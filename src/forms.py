@@ -3,9 +3,9 @@
 Application forms
 """
 from flask_wtf import FlaskForm
-from wtforms.validators import Required
+from wtforms.validators import Required, Length, EqualTo
 from wtforms import (
-    StringField, IntegerField, FileField, DateField, SelectField, HiddenField)
+    StringField, IntegerField, FileField, DateField, SelectField, HiddenField, PasswordField)
 
 
 class ChecklistForm(FlaskForm):
@@ -54,3 +54,23 @@ class ActivityForm(FlaskForm):
     county = StringField()
     district = StringField()
     planned_visitors = IntegerField()
+
+
+class RegisterUserForm(FlaskForm):
+    """
+    New user registration form
+    """
+    email = StringField('Email', validators=[Required(), Length(min=3, max=100)])
+    fullname = StringField('Полное имя', validators=[Length(max=100)])
+    password = PasswordField('Пароль', validators=[
+        Required(),
+        Length(min=6, max=10),
+        EqualTo('confirm', message='Пароли должны совпадать')])
+    confirm = PasswordField('Пароль еще раз')
+
+
+class RegisterConfirmForm(FlaskForm):
+    """
+    Registration confirmation
+    """
+    code = StringField('Код подтверждения', validators=[Required(), Length(min=6, max=6)])

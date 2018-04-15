@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% from "macros/field.html" import render_field %}
+
+{% block content %}
+
+<h2>Регистрация пользователя</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <form action="" method="POST" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {{ render_field(form.fullname) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm) }}
+            <di class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary pull-right" />
+                <a href="/" class="btn btn-default pull-right mr5">Отмена</a>                
+            </di>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

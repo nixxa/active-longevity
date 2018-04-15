@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% from "macros/pagination.html" import render_pagination %}
+
+{% block content %}
+
+<h2>Список пользователей</h2>
+<table class="table table-hover" id="reports">
+    <thead>
+        <tr>
+            <th>##</th>
+            <th>ФИО</th>
+            <th>E-mail</th>
+            <th>Подтвержден</th>
+            <th>Активен</th>
+            <th>Роль</th>
+            <th>Дата регистрации</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.guid }}</td>
+            <td>{{ user.fullname }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.confirmed }}</td>
+            <td>{{ not user.disabled }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.created }}</td>
+            <td>
+                {% if user.disabled %}
+                <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Активировать</a> /
+                {% else %}
+                <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Заблокировать</a> /
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="10">
+                {{ render_pagination(pagination) }}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        require(['users.view']);
+    </script>
+{% endblock %}

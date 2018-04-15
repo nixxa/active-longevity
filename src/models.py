@@ -40,3 +40,30 @@ class Report(db.Model):
     def __repr__(self):
         return '<Report id: {}, activity: {}, date: {}>'.format(
             self.id, self.activity_id, self.created)
+
+
+USER_ROLE_REPORTER = 'reporter'
+USER_ROLE_CUSTOMER = 'customer'
+USER_ROLE_ADMIN = 'admin'
+USER_ROLES = (USER_ROLE_REPORTER, USER_ROLE_CUSTOMER, USER_ROLE_ADMIN)
+
+
+class User(db.Model):
+    """
+    User class
+    """
+    guid = db.Column(db.String(100), primary_key=True, unique=True)
+    created = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password_hash = db.Column(db.String(1000), nullable=False)
+    password_secret = db.Column(db.String(100), nullable=False)
+    confirm_code = db.Column(db.String(6), nullable=True)
+    fullname = db.Column(db.String(1000), nullable=True)
+    role = db.Column(db.String(50), nullable=False, default=USER_ROLE_REPORTER)
+    disabled = db.Column(db.Boolean(), nullable=False, default=True)
+    confirmed = db.Column(db.Boolean(), nullable=False, default=False)
+
+    def __repr__(self):
+        return '<User id: {}, email: {}, disabled: {}>'.format(
+            self.guid, self.email, self.disabled
+        )
