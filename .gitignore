@@ -104,3 +104,4 @@ ENV/
 /src/uploads/*.jpg
 *.wsgi
 node_modules/
+startup.sh

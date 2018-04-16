@@ -5,7 +5,7 @@
     <span>Выберите район</span>
     
 </h2>
-{% if not request.authorization %}
+{% if not session.user %}
     <p>
         для отправки отчета требуется <a href="/register/">регистрация</a>.
     </p>

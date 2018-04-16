@@ -28,7 +28,7 @@
             
             <!-- Collect the nav links, forms, and other content for toggling -->
             <nav id="bs-navbar" class="navbar-collapse collapse" aria-expanded="false">
-                {% if request.authorization and session and session.user and session.user.role != 'reporter' %}
+                {% if session.user and session.user.role != 'reporter' %}
                     <ul class="nav navbar-nav">
                         <li><a href="/activities/">Мероприятия</a></li>
                         <li><a href="/reports/">Отчеты</a></li>

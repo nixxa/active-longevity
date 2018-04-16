@@ -29,6 +29,7 @@ class Report(db.Model):
     Report class
     """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    reporter_id = db.Column(db.String(100), db.ForeignKey('user.guid'), nullable=True)
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     issued = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -36,6 +37,7 @@ class Report(db.Model):
     image_source = db.Column(db.String(1000), nullable=True)
 
     activity = db.relationship('Activity', backref=db.backref('reports', lazy=True))
+    reporter = db.relationship('User', backref=db.backref('reports', lazy=True))
 
     def __repr__(self):
         return '<Report id: {}, activity: {}, date: {}>'.format(

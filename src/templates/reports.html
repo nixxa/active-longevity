@@ -9,6 +9,7 @@
     <thead>
         <tr>
             <th>##</th>
+            <th>Автор</th>
             <th>Направление</th>
             <th>Название</th>
             <th>Район</th>
@@ -21,6 +22,7 @@
     </thead>
     <tbody>
         <tr>
+            <td></td>
             <td></td>
             <td>
                 {{ form.category(class_='form-control js-selector') }}
@@ -42,6 +44,9 @@
         {% for rep in reports %}
         <tr>
             <td>{{ rep.id }}</td>
+            <td>
+                {% if rep.reporter %}{{ rep.reporter.fullname }}{% else %}None{% endif %}
+            </td>
             <td>{{ rep.activity.category }}</td>
             <td>{{ rep.activity.name }}</td>
             <td>{{ rep.activity.county  }} / {{ rep.activity.district }}</td>

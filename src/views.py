@@ -3,16 +3,15 @@
 Views module
 """
 import os
-import types
 import hashlib
 import random
 import string
 from datetime import datetime
 from uuid import uuid4
 
-from flask import render_template, jsonify, redirect, send_from_directory, request
+from flask import render_template, jsonify, redirect, send_from_directory, request, session
 from sqlalchemy import desc
-from sqlalchemy.orm import load_only, joinedload
+from sqlalchemy.orm import load_only
 from sqlalchemy.exc import IntegrityError
 
 from constants import UPLOADS_DIR
@@ -101,6 +100,7 @@ def checklist_save_action():
         activity_id=activity.id,
         visitors=form.visitors.data,
         issued=form.date.data,
+        reporter_id=session['user'].guid,
         image_source=os.path.join('/uploads/{}'.format(filename))
     )
     db.session.add(report)
