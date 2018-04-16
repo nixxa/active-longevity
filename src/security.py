@@ -15,6 +15,7 @@ from models import User
 class UserStub:
     role = 'admin'
     email = 'admin'
+    roles = ['admin']
 
 
 def check_auth(username, password):
