@@ -65,6 +65,10 @@ class User(db.Model):
     disabled = db.Column(db.Boolean(), nullable=False, default=True)
     confirmed = db.Column(db.Boolean(), nullable=False, default=False)
 
+    @property
+    def roles(self):
+        return self.role.split(',')
+
     def __repr__(self):
         return '<User id: {}, email: {}, disabled: {}>'.format(
             self.guid, self.email, self.disabled

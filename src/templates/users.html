@@ -29,10 +29,23 @@
             <td>{{ user.created }}</td>
             <td>
                 {% if user.disabled %}
-                <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Активировать</a> /
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Активировать</a>
                 {% else %}
-                <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Заблокировать</a> /
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/toggle/">Заблокировать</a>
                 {% endif %}
+                <br/>
+                {% if 'customer' not in user.roles %}
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/promote/customer/">Сделать&nbsp;менеджером</a>
+                {% else %}
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/demote/customer/">Убрать&nbsp;из&nbsp;менеджеров</a>
+                {% endif %}
+                <br/>
+                {% if 'admin' not in user.roles %}
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/promote/admin/">Сделать&nbsp;админ-ом</a>
+                {% else %}
+                    <a href="/users/{{user.guid}}/{{pagination.page}}/demote/admin/">Убрать&nbsp;из&nbsp;админ-ов</a>
+                {% endif %}
+                <br/>
             </td>
         </tr>
         {% endfor %}

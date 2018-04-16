@@ -6,7 +6,7 @@ import os
 import hashlib
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 from flask import render_template, jsonify, redirect, send_from_directory, request, session
@@ -209,16 +209,24 @@ def activity_edit_action(activity_id):
         title='Редактирование мероприятия | %s' % TITLE
     )
 
-@app.route('/dashboard/', methods=['GET'])
+@app.route('/dashboard/', methods=['GET', 'POST'])
 @authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
 def dashboard():
     """
     Dashboard with graphs
     """
+    start_date = datetime.utcnow().date()
+    end_date = start_date + timedelta(days=1)
+    if request.method == 'POST':
+        end_date = datetime.strptime(request.values['to'], '%Y-%m-%d')
+        start_date = datetime.strptime(request.values['from'], '%Y-%m-%d')
     query = Activity.query.options(load_only('category')).all()
     categories = sorted(set([row.name for row in query]))
     counties = sorted(set([row.county for row in query]))
-    today_reports = Report.query.filter_by(issued=datetime.now().date()).all()
+    today_reports = Report.query \
+        .filter(Report.issued >= start_date) \
+        .filter(Report.issued < end_date) \
+        .all()
     today_plan = []
     today_fact = []
     series = []
@@ -271,6 +279,8 @@ def dashboard():
     return render_template(
         'dashboard.html',
         data=result,
+        start=start_date.strftime('%Y-%m-%d'),
+        end=end_date.strftime('%Y-%m-%d'),
         title='Графики | %s' % TITLE
     )
 
@@ -385,4 +395,28 @@ def toggle_user_action(user_id, page):
     """
     user = User.query.get(user_id)
     user.disabled = not user.disabled
+    return redirect('/users/page/{}'.format(page))
+
+
+@app.route('/users/<user_id>/<int:page>/promote/<role>/')
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
+def promote_user_action(user_id, page, role):
+    """
+    Toggle user status
+    """
+    user = User.query.get(user_id)
+    user.role = user.role + ',' + role
+    return redirect('/users/page/{}'.format(page))
+
+
+@app.route('/users/<user_id>/<int:page>/demote/<role>/')
+@authorize([USER_ROLE_CUSTOMER, USER_ROLE_ADMIN])
+def demote_user_action(user_id, page, role):
+    """
+    Toggle user status
+    """
+    user = User.query.get(user_id)
+    roles = user.roles
+    roles.remove(role)
+    user.role = ','.join(roles)
     return redirect('/users/page/{}'.format(page))

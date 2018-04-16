@@ -3,7 +3,14 @@
 {% block content %}
 
 <div class="page-header">
-    <h1>Посетители мероприятий за сегодня</h1>
+    <h1>Посетители мероприятий</h1>
+    <div>
+        <form class="form-inline" method="POST" action=".">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            за период c <input type="date" name="from" class="form-control" value="{{start}}" /> по <input type="date" name="to" class="form-control" value="{{end}}" />
+            <input type="submit" class="btn btn-primary" value="показать" />
+        </form>            
+    </div>
 </div>
 <div class="row">
     <div class="col-md-12">

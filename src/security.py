@@ -14,6 +14,7 @@ from models import User
 
 class UserStub:
     role = 'admin'
+    email = 'admin'
 
 
 def check_auth(username, password):
@@ -46,8 +47,14 @@ def authenticate():
 
 
 def user_in_role(username, roles):
+    """
+    True if user has one of specified roles
+    """
     if session['user']:
-        return session['user'].role in roles
+        result = False
+        for role in roles:
+            result |= (role in session['user'].roles)
+        return result
     try:
         user = User.query.filter_by(email=username).one()
     except NoResultFound:
