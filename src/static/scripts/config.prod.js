@@ -22,7 +22,7 @@ require.config({
         ],
         'select2': '/static/content/select2-4.0.5/js/select2.min',
         'exif-reader': '/static/content/exif-js/exif.min',
-        'queryString': '/static/build/queryString',
+        'queryString': '/static/build/queryString.min',
         'checklist.view': '/static/build/checklist.view.min',
         'dashboard.view': '/static/build/dashboard.view.min',
         'reports.view': '/static/build/reports.view.min',
