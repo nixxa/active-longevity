@@ -11,6 +11,7 @@ class Config(object):
     """
     DEBUG = False
     TESTING = False
+    HOSTNAME = 'check-service.ru'
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://{}:{}@localhost:5432/longevity'.format(
         os.environ.get('DB_USER', 'longevity'),
         os.environ.get('DB_PASS', '123Qwe'))
@@ -39,6 +40,7 @@ class DevelopmentConfig(Config):
     """
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+    HOSTNAME = 'localhost:5000'
 
 
 class TestingConfig(Config):

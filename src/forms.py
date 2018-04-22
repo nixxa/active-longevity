@@ -11,6 +11,27 @@ from wtforms.fields.html5 import EmailField
 from functions import is_safe_url, get_redirect_target
 
 
+class RedirectForm(FlaskForm):
+    """
+    Base form with redirect
+    """
+    next = HiddenField()
+
+    def __init__(self, *args, **kwargs):
+        FlaskForm.__init__(self, *args, **kwargs)
+        if not self.next.data:
+            self.next.data = get_redirect_target() or ''
+
+    def redirect(self, endpoint='home_action', **values):
+        """
+        Redirect to right place
+        """
+        if is_safe_url(self.next.data):
+            return redirect(self.next.data)
+        target = get_redirect_target()
+        return redirect(target or url_for(endpoint, **values))
+
+
 class ChecklistForm(FlaskForm):
     """
     Checklist form
@@ -83,27 +104,6 @@ class RegisterConfirmForm(FlaskForm):
     code = StringField('Код подтверждения', validators=[
         Required('Поле обязательно для заполнения'),
         Length(min=6, max=6, message='Неправильно заполнено поле')])
-
-
-class RedirectForm(FlaskForm):
-    """
-    Base form with redirect
-    """
-    next = HiddenField()
-
-    def __init__(self, *args, **kwargs):
-        FlaskForm.__init__(self, *args, **kwargs)
-        if not self.next.data:
-            self.next.data = get_redirect_target() or ''
-
-    def redirect(self, endpoint='home_action', **values):
-        """
-        Redirect to right place
-        """
-        if is_safe_url(self.next.data):
-            return redirect(self.next.data)
-        target = get_redirect_target()
-        return redirect(target or url_for(endpoint, **values))
 
 
 class LoginForm(RedirectForm):
