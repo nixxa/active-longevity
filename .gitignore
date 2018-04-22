@@ -105,4 +105,3 @@ ENV/
 *.wsgi
 node_modules/
 startup.sh
-data/*
