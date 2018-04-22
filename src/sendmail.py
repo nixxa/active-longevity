@@ -48,3 +48,24 @@ class MailProvider:
         else:
             logger.info('E-mail sent')
         return
+
+    def send_recover_link(self, user: User, action_id):
+        """
+        Send recover link
+        """
+        sg_client = sendgrid.SendGridAPIClient(apikey=self.api_key)
+        from_email = Email('noreply@check-service.ru')
+        to_email = Email(user.email)
+        subject = '[Московское долголетие] Восстановление пароля'
+        body = '<p>Для восстановления пароля пройдите по ссылке: \
+            <a href="https://check-service.ru/recover/{}/" target="_blank"> \
+            https://check-service.ru/recover/{}/</a></p> \
+            '.format(action_id, action_id)
+        content = Content("text/html", body)
+        mail = Mail(from_email, subject, to_email, content)
+        mail_response = sg_client.client.mail.send.post(request_body=mail.get())
+        if mail_response.status_code != 202:
+            logger.error('Cant send email. Error is "%s"', mail_response.body)
+        else:
+            logger.info('E-mail sent')
+        return

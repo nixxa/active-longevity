@@ -5,7 +5,7 @@
 <h2>Аутентификация</h2>
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <form action="/login" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {{ form.next }}
@@ -20,11 +20,12 @@
             </div>
             <div class="form-group">
                 <input type="password" name="password" class="form-control" placeholder="Пароль" />
+                <p class="pull-right"><a href="/recover/">забыли пароль?</a></p>
                 {% if form.password.errors %}
                 <p class="text-danger">{{ form.password.errors|join(', ') }}</p>
                 {% endif %}
             </div>
-            <div class="form-group">
+            <div class="form-group" style="clear:both;">
                 <input type="submit" class="btn btn-primary pull-right" value="Войти" />
             </div>
         </form>

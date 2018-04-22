@@ -3,6 +3,7 @@
 Models module
 """
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import JSON
 from application import db #pylint: disable=E0401
 
 
@@ -76,3 +77,15 @@ class User(db.Model):
         return '<User id: {}, email: {}, disabled: {}>'.format(
             self.guid, self.email, self.disabled
         )
+
+
+OTA_RECOVER_PASSWORD = 'recover_password'
+
+class OneTimeAction(db.Model):
+    """
+    OneTime action class
+    """
+    guid = db.Column(db.String(100), primary_key=True, unique=True)
+    action_type = db.Column(db.String(100), nullable=False, default=OTA_RECOVER_PASSWORD)
+    created = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    body = db.Column(JSON, nullable=True)

@@ -18,8 +18,10 @@ from sqlalchemy.exc import IntegrityError
 from constants import UPLOADS_DIR
 from forms import (
     ChecklistForm, FilterReportsForm, ActivityForm, RegisterUserForm, RegisterConfirmForm,
-    LoginForm)
-from models import Activity, Report, User, USER_ROLE_REPORTER, USER_ROLE_ADMIN, USER_ROLE_CUSTOMER
+    LoginForm, RecoverPasswordForm, RecoverPasswordFormPhase2)
+from models import (
+    Activity, Report, User, USER_ROLE_REPORTER, USER_ROLE_ADMIN, USER_ROLE_CUSTOMER,
+    OneTimeAction, OTA_RECOVER_PASSWORD)
 from linq import where, select
 
 from application import app, db, config #pylint: disable=E0401
@@ -59,6 +61,70 @@ def logout():
     return redirect('/')
 
 
+@app.route('/recover/', methods=['GET', 'POST'])
+def recover_password_action():
+    """
+    Recover password by email
+    """
+    form = RecoverPasswordForm()
+    if request.method == 'POST' and form.validate():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            form.email.errors.append('E-mail указан неверно')
+        else:
+            action = OneTimeAction(
+                guid=uuid4().hex,
+                action_type=OTA_RECOVER_PASSWORD,
+                body=dict(user_id=user.guid)
+            )
+            db.session.add(action)
+            db.session.commit()
+            # send email with link to user
+            mail = MailProvider()
+            mail.send_recover_link(user, action.guid)
+            return render_template(
+                'recover_sent.html',
+                title='Восстановление пароля | %s' % TITLE
+            )
+    return render_template(
+        'recover_password.html',
+        form=form,
+        title='Восстановление пароля | %s' % TITLE
+    )
+
+
+@app.route('/recover/<code>/', methods=['GET', 'POST'])
+def recover_password_phase2_action(code):
+    """
+    Setting new password
+    """
+    form = RecoverPasswordFormPhase2()
+    action = OneTimeAction.query.get(code)
+    user = User.query.get(action.body['user_id'])
+    form.guid.data = user.guid
+    if request.method == 'POST' and form.validate():
+        user = User.query.get(form.guid.data)
+        if user is None:
+            form.email.errors.append('E-mail указан неверно')
+        else:
+            secret = config.SECRET_KEY
+            passw = form.password.data
+            hashstr = hashlib.sha256('{}:{}'.format(passw, secret).encode('utf-8')).hexdigest()
+            user.password_hash = hashstr
+            user.password_secret = secret
+            db.session.delete(action)
+            db.session.commit()
+            return render_template(
+                'recover_password_success.html',
+                title='Восстановление пароля | %s' % TITLE
+            )
+    return render_template(
+        'recover_password_2.html',
+        form=form,
+        title='Восстановление пароля | %s' % TITLE
+    )
+
+
 @app.route('/')
 def home_action():
     """
@@ -73,7 +139,7 @@ def home_action():
         if not county in districts:
             districts[activity.county] = set()
         districts[activity.county].add(activity.district)
-    
+
     for key in districts:
         districts[key] = sorted(districts[key])
     return render_template(
