@@ -9,26 +9,55 @@ import string
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from flask import render_template, jsonify, redirect, send_from_directory, request, session
+from flask import (
+    render_template, jsonify, redirect, send_from_directory, request, session, url_for)
 from sqlalchemy import desc
 from sqlalchemy.orm import load_only
 from sqlalchemy.exc import IntegrityError
 
 from constants import UPLOADS_DIR
 from forms import (
-    ChecklistForm, FilterReportsForm, ActivityForm, RegisterUserForm, RegisterConfirmForm)
+    ChecklistForm, FilterReportsForm, ActivityForm, RegisterUserForm, RegisterConfirmForm,
+    LoginForm)
 from models import Activity, Report, User, USER_ROLE_REPORTER, USER_ROLE_ADMIN, USER_ROLE_CUSTOMER
 from linq import where, select
 
 from application import app, db, config #pylint: disable=E0401
 from pagination import Pagination
-from functions import filter_by_form, fill_filter_form
+from functions import filter_by_form, fill_filter_form, is_safe_url
 from sendmail import MailProvider
-from security import authorize
+from security import authorize, check_auth
 
 
 REPORTS_PER_PAGE = 20
 TITLE = 'Активное долголетие'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Render form or authenticate credentials
+    """
+    form = LoginForm()
+    if request.method == 'POST' and form.validate():
+        if check_auth(form.username.data, form.password.data):
+            return form.redirect('home_action')
+        else:
+            form.password.errors.append('Неправильная почта или пароль')
+    return render_template(
+        'login.html',
+        form=form,
+        title='Аутентификация | %s' % TITLE)
+
+
+@app.route('/logout')
+def logout():
+    """
+    Logout user from website
+    """
+    session['user'] = None
+    return redirect('/')
+
 
 @app.route('/')
 def home_action():
@@ -44,6 +73,9 @@ def home_action():
         if not county in districts:
             districts[activity.county] = set()
         districts[activity.county].add(activity.district)
+    
+    for key in districts:
+        districts[key] = sorted(districts[key])
     return render_template(
         'index.html',
         counties=counties,

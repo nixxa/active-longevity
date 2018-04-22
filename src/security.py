@@ -5,11 +5,12 @@ Authentication rules and functions
 import functools
 import hashlib
 
-from flask import Response, request, session
+from flask import Response, request, session, redirect
 from sqlalchemy.orm.exc import NoResultFound
 
 from application import config
 from models import User
+from functions import get_redirect_target
 
 
 class UserStub:
@@ -40,27 +41,25 @@ def check_auth(username, password):
 
 def authenticate():
     """ Sends 401 response """
-    return Response(
-        str('Требуется авторизация').encode('utf-8'),
-        401,
-        {'WWW-Authenticate': str('Basic realm="Московское долголетие"').encode('utf-8')}
-    )
+    # return Response(
+    #     str('Требуется авторизация').encode('utf-8'),
+    #     401,
+    #     {'WWW-Authenticate': str('Basic realm="https://check-service.ru"').encode('utf-8')}
+    # )
+    target = get_redirect_target()
+    return redirect('/login?next=%s' % target)
 
 
-def user_in_role(username, roles):
+def user_in_role(user, roles):
     """
     True if user has one of specified roles
     """
-    if session['user']:
+    if user:
         result = False
         for role in roles:
-            result |= (role in session['user'].roles)
+            result |= (role in user.roles)
         return result
-    try:
-        user = User.query.filter_by(email=username).one()
-    except NoResultFound:
-        return False
-    return user.role in roles
+    return False
 
 
 def authorize(role_name):
@@ -69,9 +68,8 @@ def authorize(role_name):
         @functools.wraps(func)
         def decorated(*args, **kwargs):
             """ Decorate request """
-            auth = request.authorization
-            if not auth or not check_auth(auth.username, auth.password) \
-                or not user_in_role(auth.username, role_name):
+            auth = session.get('user', None)
+            if auth is None or not user_in_role(auth, role_name):
                 return authenticate()
             return func(*args, **kwargs)
         return decorated

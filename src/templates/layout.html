@@ -37,7 +37,7 @@
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">{{ session['user'].email }}</a></li>
+                        <li><a href="/logout" title='Выход'>{{ session.user.email }} (выход)</a></li>
                     </ul>
                 {% endif %}
             </nav><!-- /.navbar-collapse -->

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import json
 
+from flask import request, url_for
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import load_only
+from urllib.parse import urlparse, urljoin
 
 from models import Activity
 
 
 class AlchemyEncoder(json.JSONEncoder):
-    def default(self, obj):
+    def default(self, obj): #pylint: disable=E0202
         if isinstance(obj.__class__, DeclarativeMeta):
             # an SQLAlchemy class
             fields = {}
@@ -41,6 +43,9 @@ def filter_by_form(query, form):
 
 
 def fill_filter_form(form):
+    """
+    Apply form data to filter
+    """
     query = Activity.query.options(load_only('category', 'name', 'district', 'executor')).all()
     form.category.choices = [('None', 'все')] + \
         [(x, x) for x in sorted(set([row.category for row in query]))]
@@ -50,3 +55,24 @@ def fill_filter_form(form):
         [(x, x) for x in sorted(set([row.district for row in query]))]
     form.executor.choices = [('None', 'все')] + \
         [(x, x) for x in sorted(set([row.executor for row in query]))]
+
+
+def is_safe_url(target):
+    """
+    Check if url safe
+    """
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
+
+
+def get_redirect_target():
+    """
+    Return redirect target
+    """
+    for target in request.values.get('next'), request.full_path:
+        if not target:
+            continue
+        if is_safe_url(target):
+            return target

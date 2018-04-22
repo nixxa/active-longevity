@@ -67,6 +67,9 @@ class User(db.Model):
 
     @property
     def roles(self):
+        """
+        Return concatenated roles
+        """
         return self.role.split(',')
 
     def __repr__(self):

@@ -65,8 +65,8 @@ db = SQLAlchemy(app)
 # register CSRF
 csrf = CSRFProtect(app)
 # regionster debug toolbar
-#if app.debug:
-#    toolbar = DebugToolbarExtension(app)
+if app.debug:
+    toolbar = DebugToolbarExtension(app)
 session = Session(app)
 session.app.session_interface.db.create_all()
 
