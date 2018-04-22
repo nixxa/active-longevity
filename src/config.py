@@ -41,6 +41,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     HOSTNAME = 'localhost:5000'
+    DEBUG_TB_PROFILER_ENABLED = True
 
 
 class TestingConfig(Config):

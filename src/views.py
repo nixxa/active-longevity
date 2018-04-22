@@ -229,7 +229,7 @@ def dashboard():
     if request.method == 'POST':
         end_date = datetime.strptime(request.values['to'], '%Y-%m-%d')
         start_date = datetime.strptime(request.values['from'], '%Y-%m-%d')
-    query = Activity.query.options(load_only('category')).all()
+    query = Activity.query.all()
     categories = sorted(set([row.name for row in query]))
     counties = sorted(set([row.county for row in query]))
     today_reports = Report.query \
