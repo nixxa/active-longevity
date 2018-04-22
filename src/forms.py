@@ -101,9 +101,11 @@ class RegisterConfirmForm(FlaskForm):
     """
     Registration confirmation
     """
-    code = StringField('Код подтверждения', validators=[
-        Required('Поле обязательно для заполнения'),
-        Length(min=6, max=6, message='Неправильно заполнено поле')])
+    code = StringField(
+        'Введите код подтверждения, высланный на вашу электронную почту', 
+        validators=[
+            Required('Поле обязательно для заполнения'),
+            Length(min=6, max=6, message='Неправильно заполнено поле')])
 
 
 class LoginForm(RedirectForm):
