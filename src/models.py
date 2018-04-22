@@ -20,6 +20,8 @@ class Activity(db.Model):
     county = db.Column(db.String(50), nullable=False)
     district = db.Column(db.String(100), nullable=False)
     planned_visitors = db.Column(db.Integer, nullable=False, default=0)
+    week_schedule = db.Column(JSON, nullable=True)
+    number = db.Column(db.String(10), nullable=True)
 
     def __repr__(self):
         return '<Activity id: {}, {}-{}>'.format(self.id, self.category, self.name)

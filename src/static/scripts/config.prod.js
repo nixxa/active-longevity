@@ -26,6 +26,7 @@ require.config({
         'checklist.view': '/static/build/checklist.view.min',
         'dashboard.view': '/static/build/dashboard.view.min',
         'reports.view': '/static/build/reports.view.min',
-        'activities.view': '/static/build/activities.view.min'
+        'activities.view': '/static/build/activities.view.min',
+        'index.view': '/static/build/index.view.min'
 	}
 });

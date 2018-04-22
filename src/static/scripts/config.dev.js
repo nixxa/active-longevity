@@ -26,6 +26,7 @@ require.config({
         'checklist.view': '/static/scripts/checklist.view',
         'dashboard.view': '/static/scripts/dashboard.view',
         'reports.view': '/static/scripts/reports.view',
-        'activities.view': '/static/scripts/activities.view'
+        'activities.view': '/static/scripts/activities.view',
+        'index.view': '/static/scripts/index.view',
 	}
 });

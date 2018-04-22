@@ -47,7 +47,7 @@ def authenticate():
     #     {'WWW-Authenticate': str('Basic realm="https://check-service.ru"').encode('utf-8')}
     # )
     target = get_redirect_target()
-    return redirect('/login?next=%s' % target)
+    return redirect('/login/?next=%s' % target)
 
 
 def user_in_role(user, roles):

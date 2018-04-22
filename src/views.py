@@ -50,6 +50,7 @@ def home_action():
             districts[activity.county] = set()
         districts[activity.county].add(activity.district)
 
+    counties = sorted(counties)
     for key in districts:
         districts[key] = sorted(districts[key])
     return render_template(
@@ -430,7 +431,7 @@ def demote_user_action(user_id, page, role):
     return redirect('/users/page/{}'.format(page))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     """
     Render form or authenticate credentials
@@ -447,7 +448,7 @@ def login():
         title='Аутентификация | %s' % TITLE)
 
 
-@app.route('/logout')
+@app.route('/logout/')
 def logout():
     """
     Logout user from website
