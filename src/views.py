@@ -243,14 +243,14 @@ def dashboard():
         today_fact.append(
             sum(
                 x for x in select(
-                    where(today_reports, lambda x: x.activity.name == cat),
+                    where(today_reports, lambda x, ct=cat: x.activity.name == ct),
                     lambda x: x.visitors)
             )
         )
         today_plan.append(
             sum(
                 x for x in select(
-                    where(today_reports, lambda x: x.activity.name == cat),
+                    where(today_reports, lambda x, ct=cat: x.activity.name == ct),
                     lambda x: x.activity.planned_visitors)
             )
         )
@@ -261,7 +261,8 @@ def dashboard():
                     x for x in select(
                         where(
                             today_reports,
-                            lambda x: x.activity.county == county and x.activity.name == cat),
+                            lambda x, cy=county, ct=cat:
+                            x.activity.county == cy and x.activity.name == ct),
                         lambda x: x.visitors)
                 )
             )
